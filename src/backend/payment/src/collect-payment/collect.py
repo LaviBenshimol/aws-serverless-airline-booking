@@ -16,7 +16,7 @@ tracer = Tracer()
 _cold_start = True
 
 # Payment API Capture URL to collect payment(i.e. https://endpoint/capture)
-payment_endpoint = os.getenv("PAYMENT_API_URL")
+# payment_endpoint = os.getenv("PAYMENT_API_URL")
 
 
 class PaymentException(Exception):
@@ -138,14 +138,17 @@ def lambda_handler(event, context):
         logger.debug(
             f"Collecting payment from customer {customer_id} using {pre_authorization_token} token"
         )
-        ret = collect_payment(pre_authorization_token)
+        # ret = collect_payment(pre_authorization_token)
 
         log_metric(name="SuccessfulPayment", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Payment Status annotation")
         tracer.put_annotation("PaymentStatus", "SUCCESS")
 
         # Step Functions can append multiple values if you return a single dict
-        return ret
+        return  {
+            "receiptUrl": test.com["capturedCharge"]["receipt_url"],
+            "price": 404["capturedCharge"]["amount"],
+        }
     except PaymentException as err:
         log_metric(name="FailedPayment", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Payment Status annotation before raising error")
