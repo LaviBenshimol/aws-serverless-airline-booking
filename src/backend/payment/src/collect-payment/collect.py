@@ -14,6 +14,7 @@ logger = logger_setup()
 tracer = Tracer()
 
 _cold_start = True
+
 # Payment API Capture URL to collect payment(i.e. https://endpoint/capture)
 payment_endpoint = os.getenv("PAYMENT_API_URL")
 
@@ -27,59 +28,59 @@ class PaymentException(Exception):
         self.details = details or {}
 
 
-# @tracer.capture_method
-# def collect_payment(charge_id):
-#     """Collects payment from a pre-authorized charge through Payment API
+@tracer.capture_method
+def collect_payment(charge_id):
+    """Collects payment from a pre-authorized charge through Payment API
 
-#     For more info on Stripe Charge Object: https://stripe.com/docs/api/charges/object
+    For more info on Stripe Charge Object: https://stripe.com/docs/api/charges/object
 
-#     Parameters
-#     ----------
-#     charge_id : string
-#         Pre-authorized charge ID received from Payment API
+    Parameters
+    ----------
+    charge_id : string
+        Pre-authorized charge ID received from Payment API
 
-#     Returns
-#     -------
-#     dict
-#         receiptUrl: string
-#             receipt URL containing more details about the successful charge
+    Returns
+    -------
+    dict
+        receiptUrl: string
+            receipt URL containing more details about the successful charge
 
-#         price: int
-#             amount collected
-#     """
-#     if not payment_endpoint:
-#         logger.error({"operation": "invalid_config", "details": os.environ})
-#         raise ValueError("Payment API URL is invalid -- Consider reviewing PAYMENT_API_URL env")
+        price: int
+            amount collected
+    """
+    if not payment_endpoint:
+        logger.error({"operation": "invalid_config", "details": os.environ})
+        raise ValueError("Payment API URL is invalid -- Consider reviewing PAYMENT_API_URL env")
 
-#     payment_payload = {"chargeId": charge_id}
+    payment_payload = {"chargeId": charge_id}
 
-#     try:
-#         logger.debug({"operation": "collect_payment", "details": payment_payload})
-#         ret = requests.post(payment_endpoint, json=payment_payload)
-#         ret.raise_for_status()
-#         logger.info(
-#             {
-#                 "operations": "collect_payment",
-#                 "details": {
-#                     "response_headers": ret.headers,
-#                     "response_payload": ret.json(),
-#                     "response_status_code": ret.status_code,
-#                     "url": ret.url,
-#                 },
-#             }
-#         )
-#         payment_response = ret.json()
+    try:
+        logger.debug({"operation": "collect_payment", "details": payment_payload})
+        ret = requests.post(payment_endpoint, json=payment_payload)
+        ret.raise_for_status()
+        logger.info(
+            {
+                "operations": "collect_payment",
+                "details": {
+                    "response_headers": ret.headers,
+                    "response_payload": ret.json(),
+                    "response_status_code": ret.status_code,
+                    "url": ret.url,
+                },
+            }
+        )
+        payment_response = ret.json()
 
-#         logger.debug("Adding collect payment operation result as tracing metadata")
-#         tracer.put_metadata(charge_id, ret)
+        logger.debug("Adding collect payment operation result as tracing metadata")
+        tracer.put_metadata(charge_id, ret)
 
-#         return {
-#             "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
-#             "price": payment_response["capturedCharge"]["amount"],
-#         }
-#     except requests.exceptions.RequestException as err:
-#         logger.error({"operation": "collect_payment", "details": err})
-#         raise PaymentException(status_code=ret.status_code, details=err)
+        return {
+            "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
+            "price": payment_response["capturedCharge"]["amount"],
+        }
+    except requests.exceptions.RequestException as err:
+        logger.error({"operation": "collect_payment", "details": err})
+        raise PaymentException(status_code=ret.status_code, details=err)
 
 
 @tracer.capture_lambda_handler(process_booking_sfn=True)
