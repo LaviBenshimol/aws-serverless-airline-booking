@@ -127,14 +127,14 @@ export async function createBooking(
     console.info(
       `Processing payment before proceeding to book flight ${outboundFlight}`
     );
-    let chargeToken = await processPayment({
-      paymentToken,
-      outboundFlight,
-      customerEmail
-    });
+    // let chargeToken = await processPayment({
+    //   paymentToken,
+    //   outboundFlight,
+    //   customerEmail
+    // });
 
     console.info(
-      `Creating booking with token ${chargeToken} for flight ${outboundFlight}`
+      `Creating booking with token for flight ${outboundFlight}`
     );
 
     Loading.show({
@@ -143,7 +143,7 @@ export async function createBooking(
 
     const processBookingInput = {
       input: {
-        paymentToken: chargeToken,
+        // paymentToken: chargeToken,
         bookingOutboundFlightId: outboundFlight.id
       }
     };
