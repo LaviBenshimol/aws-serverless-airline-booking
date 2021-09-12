@@ -124,11 +124,6 @@ export async function createBooking(
     console.info(
       `Processing payment before proceeding to book flight ${outboundFlight}`
     );
-    // let chargeToken = await processPayment({
-    //   paymentToken,
-    //   outboundFlight,
-    //   customerEmail
-    // });
 
     console.info(
       `Creating booking with token for flight ${outboundFlight}`
