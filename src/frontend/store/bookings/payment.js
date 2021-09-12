@@ -2,9 +2,6 @@ import Flight from "../../shared/models/FlightClass"; // eslint-disable-line
 import { Loading } from "quasar";
 import axios from "axios";
 
-const paymentEndpoint =
-  process.env.VUE_APP_PaymentChargeUrl || "no payment gateway endpoint set";
-
 /**
  *
  * Process Payment function - processPayment calls Payment endpoint to pre-authorize charge upon tokenized payment details
@@ -46,19 +43,12 @@ export async function processPayment({
   console.log("Charge data to be processed");
   console.log(chargeData);
   try {
-    const data = await axios.post(paymentEndpoint, chargeData);
-    const {
-      data: {
-        createdCharge: { id: chargeId }
-      }
-    } = data;
-
     Loading.show({
       message: "Payment authorized successfully..."
     });
 
     console.groupEnd();
-    return chargeId;
+    return;
   } catch (err) {
     console.error(err);
     throw err;
