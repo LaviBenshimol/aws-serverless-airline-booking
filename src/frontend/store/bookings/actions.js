@@ -115,7 +115,6 @@ export async function fetchBooking(
  *        }
  */
 export async function createBooking(
-  { rootState },
   { outboundFlight }
 ) {
   console.group("store/bookings/actions/createBooking");
