@@ -2,6 +2,7 @@ import Booking from "../../shared/models/BookingClass";
 import Flight from "../../shared/models/FlightClass"; // eslint-disable-line
 // @ts-ignore
 import { Loading } from "quasar";
+import { processPayment } from "./payment";
 
 import { API, graphqlOperation } from "aws-amplify";
 import {
@@ -88,6 +89,7 @@ export async function fetchBooking(
  * **NOTE**: It doesn't mutate the store
  * @param {object} context - Vuex action context (context.commit, context.getters, context.state, context.dispatch)
  * @param {object} obj - Object containing params required to create a booking
+ * @param {object} obj.paymentToken - Stripe JS Payment token object
  * @param {Flight} obj.outboundFlight - Outbound Flight
  * @returns {promise} - Promise representing booking effectively made in the Booking service.
  * @example
@@ -115,17 +117,24 @@ export async function fetchBooking(
  *        }
  */
 export async function createBooking(
-  { outboundFlight }
+  { rootState },
+  { paymentToken, outboundFlight }
 ) {
   console.group("store/bookings/actions/createBooking");
   try {
-    
+    const customerEmail = rootState.profile.user.attributes.email;
+
     console.info(
       `Processing payment before proceeding to book flight ${outboundFlight}`
     );
+    let chargeToken = await processPayment({
+      paymentToken,
+      outboundFlight,
+      customerEmail
+    });
 
     console.info(
-      `Creating booking with token for flight ${outboundFlight}`
+      `Creating booking with token ${chargeToken} for flight ${outboundFlight}`
     );
 
     Loading.show({
@@ -134,7 +143,7 @@ export async function createBooking(
 
     const processBookingInput = {
       input: {
-        // paymentToken: chargeToken,
+        paymentToken: chargeToken,
         bookingOutboundFlightId: outboundFlight.id
       }
     };
