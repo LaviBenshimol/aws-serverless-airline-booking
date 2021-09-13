@@ -257,13 +257,6 @@ export default {
      * Given a successful payment it attempts to create a booking with Booking service
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
-    async payment() {
-      let options = {
-        name: this.form.name,
-        address_zip: this.form.postcode,
-        address_country: this.form.country
-      };
-
       try {
         const { token, error } = await stripe.createToken(card, options);
         this.token.details = token;
