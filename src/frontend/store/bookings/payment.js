@@ -1,9 +1,9 @@
 import Flight from "../../shared/models/FlightClass"; // eslint-disable-line
 import { Loading } from "quasar";
-import axios from "axios";
+// import axios from "axios";
 
-const paymentEndpoint =
-  process.env.VUE_APP_PaymentChargeUrl || "no payment gateway endpoint set";
+// const paymentEndpoint =
+//   process.env.VUE_APP_PaymentChargeUrl || "no payment gateway endpoint set";
 
 /**
  *
