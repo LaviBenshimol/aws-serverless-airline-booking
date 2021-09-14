@@ -2,7 +2,7 @@ import Booking from "../../shared/models/BookingClass";
 import Flight from "../../shared/models/FlightClass"; // eslint-disable-line
 // @ts-ignore
 import { Loading } from "quasar";
-import { processPayment } from "./payment";
+// import { processPayment } from "./payment";
 
 import { API, graphqlOperation } from "aws-amplify";
 import {
@@ -127,15 +127,15 @@ export async function createBooking(
     console.info(
       `Processing payment before proceeding to book flight ${outboundFlight}`
     );
-    let chargeToken = await processPayment({
-      paymentToken,
-      outboundFlight,
-      customerEmail
-    });
+    // let chargeToken = await processPayment({
+    //   paymentToken,
+    //   outboundFlight,
+    //   customerEmail
+    // });
 
-    console.info(
-      `Creating booking with token ${chargeToken} for flight ${outboundFlight}`
-    );
+    // console.info(
+    //   `Creating booking with token ${chargeToken} for flight ${outboundFlight}`
+    // );
 
     Loading.show({
       message: "Creating a new booking..."
@@ -143,7 +143,7 @@ export async function createBooking(
 
     const processBookingInput = {
       input: {
-        paymentToken: chargeToken,
+        paymentToken: "8",
         bookingOutboundFlightId: outboundFlight.id
       }
     };

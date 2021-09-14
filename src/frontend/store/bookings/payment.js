@@ -1,5 +1,5 @@
 import Flight from "../../shared/models/FlightClass"; // eslint-disable-line
-import { Loading } from "quasar";
+// import { Loading } from "quasar";
 // import axios from "axios";
 
 // const paymentEndpoint =
@@ -23,44 +23,44 @@ import { Loading } from "quasar";
  *      customerEmail
  *   });
  */
-export async function processPayment({
-  paymentToken,
-  outboundFlight,
-  customerEmail
-}) {
-  console.group("store/bookings/actions/processPayment");
-  Loading.show({
-    message: "Charging a pre-authorization..."
-  });
+// export async function processPayment({
+//   paymentToken,
+//   outboundFlight,
+//   customerEmail
+// }) {
+//   console.group("store/bookings/actions/processPayment");
+//   Loading.show({
+//     message: "Charging a pre-authorization..."
+//   });
 
-  if (!paymentToken) throw "Invalid payment token";
+//   if (!paymentToken) throw "Invalid payment token";
 
-  const chargeData = {
-    amount: outboundFlight.ticketPrice,
-    currency: outboundFlight.ticketCurrency,
-    stripeToken: paymentToken.details.id,
-    description: `Payment by ${customerEmail}`,
-    email: customerEmail
-  };
+//   const chargeData = {
+//     amount: outboundFlight.ticketPrice,
+//     currency: outboundFlight.ticketCurrency,
+//     stripeToken: paymentToken.details.id,
+//     description: `Payment by ${customerEmail}`,
+//     email: customerEmail
+//   };
 
-  console.log("Charge data to be processed");
-  console.log(chargeData);
-  try {
-    // const data = await axios.post(paymentEndpoint, chargeData);
-    // const {
-    //   data: {
-    //     createdCharge: { id: chargeId }
-    //   }
-    // } = data;
+//   console.log("Charge data to be processed");
+//   console.log(chargeData);
+//   try {
+//     const data = await axios.post(paymentEndpoint, chargeData);
+//     const {
+//       data: {
+//         createdCharge: { id: chargeId }
+//       }
+//     } = data;
 
-    Loading.show({
-      message: "Payment authorized successfully..."
-    });
+    // Loading.show({
+    //   message: "Payment authorized successfully..."
+    // });
 
-    console.groupEnd();
-    return "8";
-  } catch (err) {
-    console.error(err);
-    throw err;
-  }
-}
+    // console.groupEnd();
+    // return chargeId;
+  // } catch (err) {
+  //   console.error(err);
+  //   throw err;
+  // }
+// }
