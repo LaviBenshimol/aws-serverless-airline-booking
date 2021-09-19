@@ -108,6 +108,7 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
+          :disable="$v.form.$invalid || form.isCardInvalid"
           data-test="payment-button"
         >
           <q-icon
@@ -196,7 +197,22 @@ export default {
       }
     }
   },
+  mounted() {
+    /**
+     * Stripe JS is loaded into the DOM asynchronously
+     * once loaded we attach Stripe Elements to custom DOM elements
+     * that makes payment credit card collection seamless through iFrame while providing an unified experience
+     */
+    let stripeElements = this.loadStripeJS();
+    stripeElements
+      .then(() => this.loadStripeElements())
+      .catch(err => console.error(err));
+  },
   /**
+   * @param {object} token - Stripe JS token object
+   * @param {object} token.details - Stripe JS tokenized details
+   * @param {object} token.error - Stripe JS error when attempting tokenization
+   * @param {string} stripeKey - Public Stripe JS key for tokenization
    * @param {object} form - Form object holding some information and validation hooks
    * @param {string} form.name - Given contact name
    * @param {string} form.country - Given contact country
@@ -206,6 +222,11 @@ export default {
    */
   data() {
     return {
+      token: {
+        details: "",
+        error: ""
+      },
+      stripeKey: process.env.VUE_APP_StripePublicKey || "no Stripe public key",
       form: {
         name: "",
         country: "",
@@ -224,6 +245,7 @@ export default {
             value: "US"
           }
         ],
+        isCardInvalid: true
       },
       selectedFlight: this.flight
     };
@@ -242,13 +264,14 @@ export default {
       };
 
       try {
-        const { token, error } = this.token.details = token;
+        const { token, error } = await stripe.createToken(card, options);
+        this.token.details = token;
         this.token.error = error;
 
         if (this.token.error) throw this.token.error;
 
         await this.$store.dispatch("bookings/createBooking", {
-          paymentToken: "6",
+          paymentToken: this.token,
           outboundFlight: this.selectedFlight
         });
 
@@ -268,6 +291,76 @@ export default {
         console.error(err);
       }
     },
+    /**
+     * Injects Stripe JS library asynchronously into the DOM
+     */
+    loadStripeJS() {
+      return new Promise((resolve, reject) => {
+        let stripeScript = document.createElement("script");
+        stripeScript.async = true;
+        stripeScript.src = "https://js.stripe.com/v3/";
+        stripeScript.addEventListener("load", resolve);
+        stripeScript.addEventListener("error", () =>
+          reject("Error loading Stripe Elements.")
+        );
+        stripeScript.addEventListener("abort", () =>
+          reject("Stripe Elements loading aborted.")
+        );
+        document.head.appendChild(stripeScript);
+      });
+    },
+    /**
+     * Provides customer feedback upon Stripe Elements card data validation
+     */
+    updateCardFeedback(result) {
+      this.token.error = result.error;
+      this.form.isCardInvalid = !result.complete;
+    },
+    /**
+     * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
+     * It also customizes Stripe Elements UI to provide a consistent experience
+     */
+    loadStripeElements() {
+      stripe = Stripe(this.stripeKey); // eslint-disable-line
+      let elements = stripe.elements();
+      let style = {
+        base: {
+          iconColor: "#666EE8",
+          color: "#31325F",
+          lineHeight: "40px",
+          fontWeight: 300,
+          fontFamily: "Helvetica Neue",
+          fontSize: "15px",
+
+          "::placeholder": {
+            color: "#CFD7E0"
+          }
+        }
+      };
+
+      card = elements.create("cardNumber", {
+        style: style
+      });
+
+      var cardExpiryElement = elements.create("cardExpiry", {
+        style: style
+      });
+
+      var cardCvcElement = elements.create("cardCvc", {
+        style: style
+      });
+
+      // Enable Stripe iFrame on each field
+      card.mount("#card-number-element");
+      cardExpiryElement.mount("#card-expiry-element");
+      cardCvcElement.mount("#card-cvc-element");
+
+      // Stripe Elements emit events upon card validation
+      // Capture it and provide feedback to customer
+      card.on("change", event => this.updateCardFeedback(event));
+      cardExpiryElement.on("change", event => this.updateCardFeedback(event));
+      cardCvcElement.on("change", event => this.updateCardFeedback(event));
+    }
   }
 };
 </script>
