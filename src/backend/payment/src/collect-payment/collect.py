@@ -48,35 +48,37 @@ def collect_payment(charge_id):
         price: int
             amount collected
     """
-    if not payment_endpoint:
-        logger.error({"operation": "invalid_config", "details": os.environ})
-        raise ValueError("Payment API URL is invalid -- Consider reviewing PAYMENT_API_URL env")
+    # if not payment_endpoint:
+    #     logger.error({"operation": "invalid_config", "details": os.environ})
+    #     raise ValueError("Payment API URL is invalid -- Consider reviewing PAYMENT_API_URL env")
 
-    payment_payload = {"chargeId": charge_id}
+    # payment_payload = {"chargeId": charge_id}
 
-    try:
-        logger.debug({"operation": "collect_payment", "details": payment_payload})
-        ret = requests.post(payment_endpoint, json=payment_payload)
-        ret.raise_for_status()
-        logger.info(
-            {
-                "operations": "collect_payment",
-                "details": {
-                    "response_headers": ret.headers,
-                    "response_payload": ret.json(),
-                    "response_status_code": ret.status_code,
-                    "url": ret.url,
-                },
-            }
-        )
-        payment_response = ret.json()
+    # try:
+    #     logger.debug({"operation": "collect_payment", "details": payment_payload})
+    #     ret = requests.post(payment_endpoint, json=payment_payload)
+    #     ret.raise_for_status()
+    #     logger.info(
+    #         {
+    #             "operations": "collect_payment",
+    #             "details": {
+    #                 "response_headers": ret.headers,
+    #                 "response_payload": ret.json(),
+    #                 "response_status_code": ret.status_code,
+    #                 "url": ret.url,
+    #             },
+    #         }
+    #     )
+    #     payment_response = ret.json()
 
-        logger.debug("Adding collect payment operation result as tracing metadata")
-        tracer.put_metadata(charge_id, ret)
+    #     logger.debug("Adding collect payment operation result as tracing metadata")
+    #     tracer.put_metadata(charge_id, ret)
 
         return {
-            "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
-            "price": payment_response["capturedCharge"]["amount"],
+            # "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
+            # "price": payment_response["capturedCharge"]["amount"],
+            "receiptUrl": "test.com",
+            "price": "1,000,000,000$",
         }
     except requests.exceptions.RequestException as err:
         logger.error({"operation": "collect_payment", "details": err})
