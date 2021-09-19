@@ -74,12 +74,12 @@ def collect_payment(charge_id):
     #     logger.debug("Adding collect payment operation result as tracing metadata")
     #     tracer.put_metadata(charge_id, ret)
 
-        return {
-            # "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
-            # "price": payment_response["capturedCharge"]["amount"],
-            "receiptUrl": "test.com",
-            "price": "1,000,000,000$",
-        }
+    return {
+        # "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
+        # "price": payment_response["capturedCharge"]["amount"],
+        "receiptUrl": "test.com",
+        "price": "1,000,000,000$",
+    }
     except requests.exceptions.RequestException as err:
         logger.error({"operation": "collect_payment", "details": err})
         raise PaymentException(status_code=ret.status_code, details=err)
