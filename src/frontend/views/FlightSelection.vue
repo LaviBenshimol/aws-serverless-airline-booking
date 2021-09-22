@@ -264,9 +264,9 @@ export default {
       };
 
       try {
-        let { token, error } = {
-          token = "Not1Random2Token300",
-          error = "MyError"
+        let token = {
+          token: this.token = "Not1Random2Token300",
+          error: this.error = "MyError"
         };
         if (this.token.error) throw this.token.error;
 
