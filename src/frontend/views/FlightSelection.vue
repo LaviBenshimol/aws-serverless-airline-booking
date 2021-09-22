@@ -264,7 +264,7 @@ export default {
       };
 
       try {
-        const { token, error } = {
+        let { token, error } = {
           token = "Not1Random2Token300",
           error = "MyError"
         };
