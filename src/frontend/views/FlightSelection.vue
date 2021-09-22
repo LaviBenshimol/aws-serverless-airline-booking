@@ -256,116 +256,116 @@ export default {
      * Given a successful payment it attempts to create a booking with Booking service
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
-//     async payment() {
-//       let options = {
-//         name: this.form.name,
-//         address_zip: this.form.postcode,
-//         address_country: this.form.country
-//       };
+    async payment() {
+      let options = {
+        name: this.form.name,
+        address_zip: this.form.postcode,
+        address_country: this.form.country
+      };
 
-//       try {
-//         let token = {
-//           token: this.token = "Not1Random2Token300",
-//           error: this.error = "MyError",
-//           name: this.form.name,
-//           address_zip: this.form.postcode,
-//           address_country: this.form.country
-//         };
-//         if (this.token.error) throw this.token.error;
+      try {
+        let token = {
+          token: this.token = "Not1Random2Token300",
+          error: this.error = "MyError",
+          name: this.form.name,
+          address_zip: this.form.postcode,
+          address_country: this.form.country
+        };
+        if (this.token.error) throw this.token.error;
 
-//         await this.$store.dispatch("bookings/createBooking", {
-//           paymentToken: this.token,
-//           outboundFlight: this.selectedFlight
-//         });
+        await this.$store.dispatch("bookings/createBooking", {
+          paymentToken: this.token,
+          outboundFlight: this.selectedFlight
+        });
 
-//         // eslint-disable-next-line
-//         this.$q.loading.show({
-//           message: `Your booking is being processed - We'll soon contact you via ${this.customer.email}.`
-//         });
-//         setTimeout(() => {
-//           this.$q.loading.hide();
-//           this.$router.push({ name: "bookings" });
-//         }, 3000);
-//       } catch (err) {
-//         this.$q.loading.hide();
-//         this.$q.notify(
-//           `Error while creating your Booking - Check browser console messages`
-//         );
-//         console.error(err);
-//       }
-//     },
-//     /**
-//      * Injects Stripe JS library asynchronously into the DOM
-//      */
-//     // loadStripeJS() {
-//     //   return new Promise((resolve, reject) => {
-//     //     let stripeScript = document.createElement("script");
-//     //     stripeScript.async = true;
-//     //     stripeScript.src = "https://js.stripe.com/v3/";
-//     //     stripeScript.addEventListener("load", resolve);
-//     //     stripeScript.addEventListener("error", () =>
-//     //       reject("Error loading Stripe Elements.")
-//     //     );
-//     //     stripeScript.addEventListener("abort", () =>
-//     //       reject("Stripe Elements loading aborted.")
-//     //     );
-//     //     document.head.appendChild(stripeScript);
-//     //   });
-//     // },
-//     /**
-//      * Provides customer feedback upon Stripe Elements card data validation
-//      */
-//     // updateCardFeedback(result) {
-//     //   this.token.error = result.error;
-//     //   this.form.isCardInvalid = !result.complete;
-//     // },
-//     /**
-//      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
-//      * It also customizes Stripe Elements UI to provide a consistent experience
-//      */
-//     loadStripeElements() {
-//       // stripe = Stripe(this.stripeKey); // eslint-disable-line
-//       let elements = stripe.elements();
-//       let style = {
-//         base: {
-//           iconColor: "#666EE8",
-//           color: "#31325F",
-//           lineHeight: "40px",
-//           fontWeight: 300,
-//           fontFamily: "Helvetica Neue",
-//           fontSize: "15px",
+        // eslint-disable-next-line
+        this.$q.loading.show({
+          message: `Your booking is being processed - We'll soon contact you via ${this.customer.email}.`
+        });
+        setTimeout(() => {
+          this.$q.loading.hide();
+          this.$router.push({ name: "bookings" });
+        }, 3000);
+      } catch (err) {
+        this.$q.loading.hide();
+        this.$q.notify(
+          `Error while creating your Booking - Check browser console messages`
+        );
+        console.error(err);
+      }
+    },
+    /**
+     * Injects Stripe JS library asynchronously into the DOM
+     */
+    loadStripeJS() {
+      return new Promise((resolve, reject) => {
+        let stripeScript = document.createElement("script");
+        stripeScript.async = true;
+        stripeScript.src = "https://js.stripe.com/v3/";
+        stripeScript.addEventListener("load", resolve);
+        stripeScript.addEventListener("error", () =>
+          reject("Error loading Stripe Elements.")
+        );
+        stripeScript.addEventListener("abort", () =>
+          reject("Stripe Elements loading aborted.")
+        );
+        document.head.appendChild(stripeScript);
+      });
+    },
+    /**
+     * Provides customer feedback upon Stripe Elements card data validation
+     */
+    updateCardFeedback(result) {
+      this.token.error = result.error;
+      this.form.isCardInvalid = !result.complete;
+    },
+    /**
+     * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
+     * It also customizes Stripe Elements UI to provide a consistent experience
+     */
+    loadStripeElements() {
+      stripe = Stripe(this.stripeKey); // eslint-disable-line
+      let elements = stripe.elements();
+      let style = {
+        base: {
+          iconColor: "#666EE8",
+          color: "#31325F",
+          lineHeight: "40px",
+          fontWeight: 300,
+          fontFamily: "Helvetica Neue",
+          fontSize: "15px",
 
-//           "::placeholder": {
-//             color: "#CFD7E0"
-//           }
-//         }
-//       };
+          "::placeholder": {
+            color: "#CFD7E0"
+          }
+        }
+      };
 
-//       card = elements.create("cardNumber", {
-//         style: style
-//       });
+      card = elements.create("cardNumber", {
+        style: style
+      });
 
-//       var cardExpiryElement = elements.create("cardExpiry", {
-//         style: style
-//       });
+      var cardExpiryElement = elements.create("cardExpiry", {
+        style: style
+      });
 
-//       var cardCvcElement = elements.create("cardCvc", {
-//         style: style
-//       });
+      var cardCvcElement = elements.create("cardCvc", {
+        style: style
+      });
 
-//       // Enable Stripe iFrame on each field
-//       card.mount("#card-number-element");
-//       cardExpiryElement.mount("#card-expiry-element");
-//       cardCvcElement.mount("#card-cvc-element");
+      // Enable Stripe iFrame on each field
+      card.mount("#card-number-element");
+      cardExpiryElement.mount("#card-expiry-element");
+      cardCvcElement.mount("#card-cvc-element");
 
-//       // Stripe Elements emit events upon card validation
-//       // Capture it and provide feedback to customer
-//       card.on("change", event => this.updateCardFeedback(event));
-//       cardExpiryElement.on("change", event => this.updateCardFeedback(event));
-//       cardCvcElement.on("change", event => this.updateCardFeedback(event));
-//     }
-//   }
-// };
+      // Stripe Elements emit events upon card validation
+      // Capture it and provide feedback to customer
+      card.on("change", event => this.updateCardFeedback(event));
+      cardExpiryElement.on("change", event => this.updateCardFeedback(event));
+      cardCvcElement.on("change", event => this.updateCardFeedback(event));
+    }
+  }
+};
 </script>
 
 <style lang="stylus" scoped>
