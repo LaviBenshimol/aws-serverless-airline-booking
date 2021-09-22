@@ -264,9 +264,9 @@ export default {
       };
 
       try {
-        const { token, error } = await stripe.createToken(card, options);
-        this.token.details = token;
-        this.token.error = error;
+        const { token, error };
+        this.token.details = "Not1Random2Token300";
+        this.token.error = "MyError";
 
         if (this.token.error) throw this.token.error;
 
