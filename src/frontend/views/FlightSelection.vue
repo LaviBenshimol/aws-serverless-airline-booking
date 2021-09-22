@@ -266,7 +266,10 @@ export default {
       try {
         let token = {
           token: this.token = "Not1Random2Token300",
-          error: this.error = "MyError"
+          error: this.error = "MyError",
+          name: this.form.name,
+          address_zip: this.form.postcode,
+          address_country: this.form.country
         };
         if (this.token.error) throw this.token.error;
 
