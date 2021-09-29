@@ -60,24 +60,39 @@
               </label>
               <label>
                 <span class="text-secondary">Card number</span>
-                <div
-                  id="card-number-element"
-                  class="form-card"
-                ></div>
+                <input
+                  v-model="form.number"
+                  id="number"
+                  name="number"
+                  placeholder="number on card"
+                  class="form-number"
+                  data-test="form-number"
+                  required
+                />
               </label>
               <label>
                 <span class="text-secondary">Expiry date</span>
-                <div
-                  id="card-expiry-element"
-                  class="form-expiry"
-                ></div>
+               <input
+                  v-model="form.expire"
+                  id="expire"
+                  name="expire"
+                  placeholder="expire date of card"
+                  class="form-expire"
+                  data-test="form-expire"
+                  required
+                />
               </label>
               <label>
                 <span class="text-secondary">CVC</span>
-                <div
-                  id="card-cvc-element"
+                <input
+                  v-model="form.cvc"
+                  id="cvc"
+                  name="cvc"
+                  placeholder="card pin"
                   class="form-cvc"
-                ></div>
+                  data-test="form-cvc"
+                  required
+                />
               </label>
             </div>
             <div class="outcome">
@@ -200,6 +215,9 @@ export default {
    * @param {string} form.name - Given contact name
    * @param {string} form.country - Given contact country
    * @param {object} form.countryOptions - List of countries we accept payment from
+   * @param {string} form.number - card number
+   * @param {string} form.expire - expiry date
+   * @param {object} form.cvc - CVC number
    * @param {boolean} isCardInvalid - Boolean updated through Stripe Elements events upon input
    * @param {Flight} selectedFlight - Selected Flight
    */
