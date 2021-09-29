@@ -58,41 +58,38 @@
                   />
                 </div>
               </label>
-              <label>
-                <span class="text-secondary">Card number</span>
+              <label for="postcode">
+                <span class="text-secondary">Postcode</span>
                 <input
-                  v-model="form.number"
-                  id="number"
-                  name="number"
-                  placeholder="number on card"
-                  class="form-number"
-                  data-test="form-number"
+                  v-model="form.postcode"
+                  id="postcode"
+                  name="postcode"
+                  placeholder="Postcode"
+                  class="form__input field form__postcode"
+                  data-test="form-postcode"
                   required
                 />
+              </label>
+              <label>
+                <span class="text-secondary">Card number</span>
+                <div
+                  id="card-number-element"
+                  class="form__stripe field form__card"
+                ></div>
               </label>
               <label>
                 <span class="text-secondary">Expiry date</span>
-               <input
-                  v-model="form.expire"
-                  id="expire"
-                  name="expire"
-                  placeholder="expire date of card"
-                  class="form-expire"
-                  data-test="form-expire"
-                  required
-                />
+                <div
+                  id="card-expiry-element"
+                  class="form__stripe field form__expiry"
+                ></div>
               </label>
               <label>
                 <span class="text-secondary">CVC</span>
-                <input
-                  v-model="form.cvc"
-                  id="cvc"
-                  name="cvc"
-                  placeholder="card pin"
-                  class="form-cvc"
-                  data-test="form-cvc"
-                  required
-                />
+                <div
+                  id="card-cvc-element"
+                  class="form__stripe field form__cvc"
+                ></div>
               </label>
             </div>
             <div class="outcome">
@@ -111,6 +108,7 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
+          
           data-test="payment-button"
         >
           <q-icon
@@ -131,7 +129,7 @@ import FlightToolbar from "../components/FlightToolbar";
 import FlightClass from "../shared/models/FlightClass";
 import FlightLoader from "../components/FlightLoader";
 import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+import { required, minLength } from "vuelidate/lib/validators";
 import { mapState, mapGetters } from "vuex";
 
 /**
@@ -162,6 +160,10 @@ export default {
       country: {
         required
       },
+      postcode: {
+        required,
+        minLength: minLength(3)
+      }
     }
   },
   /**
@@ -215,9 +217,6 @@ export default {
    * @param {string} form.name - Given contact name
    * @param {string} form.country - Given contact country
    * @param {object} form.countryOptions - List of countries we accept payment from
-   * @param {string} form.number - card number
-   * @param {string} form.expire - expiry date
-   * @param {object} form.cvc - CVC number
    * @param {boolean} isCardInvalid - Boolean updated through Stripe Elements events upon input
    * @param {Flight} selectedFlight - Selected Flight
    */
@@ -258,12 +257,12 @@ export default {
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
     // async payment() {
-    //   let options = {
-    //     name: this.form.name,
-    //     address_zip: this.form.postcode,
-    //     address_country: this.form.country
-    //   };
-    // },
+      // let options = {
+      //   name: this.form.name,
+      //   address_zip: this.form.postcode,
+      //   address_country: this.form.country
+      // };
+
       
     /**
      * Injects Stripe JS library asynchronously into the DOM
@@ -294,42 +293,47 @@ export default {
      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
      * It also customizes Stripe Elements UI to provide a consistent experience
      */
-    // loadStripeElements() {
-      // stripe = Stripe(this.stripeKey); // eslint-disable-line
-      // let elements = stripe.elements();
-//       let style = {
-//         base: {
-//           iconColor: "#666EE8",
-//           color: "#31325F",
-//           lineHeight: "40px",
-//           fontWeight: 300,
-//           fontFamily: "Helvetica Neue",
-//           fontSize: "15px",
+    loadStripeElements() {
+      stripe = Stripe(this.stripeKey); // eslint-disable-line
+      let elements = stripe.elements();
+      let style = {
+        base: {
+          iconColor: "#666EE8",
+          color: "#31325F",
+          lineHeight: "40px",
+          fontWeight: 300,
+          fontFamily: "Helvetica Neue",
+          fontSize: "15px",
 
-//           "::placeholder": {
-//             color: "#CFD7E0"
-//           }
-//         }
-//       };
+          "::placeholder": {
+            color: "#CFD7E0"
+          }
+        }
+      };
 
-//       card = elements.create("cardNumber", {
-//         style: style
-//       });
+      card = elements.create("cardNumber", {
+        style: style
+      });
 
-//       var cardExpiryElement = elements.create("cardExpiry", {
-//         style: style
-//       });
+      var cardExpiryElement = elements.create("cardExpiry", {
+        style: style
+      });
 
-//       var cardCvcElement = elements.create("cardCvc", {
-//         style: style
-//       });
+      var cardCvcElement = elements.create("cardCvc", {
+        style: style
+      });
 
-//       // Enable Stripe iFrame on each field
-//       card.mount("#card-number-element");
-//       cardExpiryElement.mount("#card-expiry-element");
-//       cardCvcElement.mount("#card-cvc-element");
+      // Enable Stripe iFrame on each field
+      card.mount("#card-number-element");
+      cardExpiryElement.mount("#card-expiry-element");
+      cardCvcElement.mount("#card-cvc-element");
 
-//     }
+      // Stripe Elements emit events upon card validation
+      // Capture it and provide feedback to customer
+      // card.on("change", event => this.updateCardFeedback(event));
+      // cardExpiryElement.on("change", event => this.updateCardFeedback(event));
+      // cardCvcElement.on("change", event => this.updateCardFeedback(event));
+    }
   }
 };
 </script>
