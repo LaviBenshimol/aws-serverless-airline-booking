@@ -58,37 +58,25 @@
                   />
                 </div>
               </label>
-              <label for="postcode">
-                <span class="text-secondary">Postcode</span>
-                <input
-                  v-model="form.postcode"
-                  id="postcode"
-                  name="postcode"
-                  placeholder="Postcode"
-                  class="form__input field form__postcode"
-                  data-test="form-postcode"
-                  required
-                />
-              </label>
               <label>
                 <span class="text-secondary">Card number</span>
                 <div
                   id="card-number-element"
-                  class="form__stripe field form__card"
+                  class="form-card"
                 ></div>
               </label>
               <label>
                 <span class="text-secondary">Expiry date</span>
                 <div
                   id="card-expiry-element"
-                  class="form__stripe field form__expiry"
+                  class="form-expiry"
                 ></div>
               </label>
               <label>
                 <span class="text-secondary">CVC</span>
                 <div
                   id="card-cvc-element"
-                  class="form__stripe field form__cvc"
+                  class="form-cvc"
                 ></div>
               </label>
             </div>
@@ -108,7 +96,6 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
-          :disable="$v.form.$invalid || form.isCardInvalid"
           data-test="payment-button"
         >
           <q-icon
@@ -160,10 +147,6 @@ export default {
       country: {
         required
       },
-      postcode: {
-        required,
-        minLength: minLength(3)
-      }
     }
   },
   /**
