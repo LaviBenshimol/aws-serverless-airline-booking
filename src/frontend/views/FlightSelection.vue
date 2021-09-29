@@ -256,74 +256,79 @@ export default {
      * Given a successful payment it attempts to create a booking with Booking service
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
-    async payment() {
-    },
+    // async payment() {
+    //   let options = {
+    //     name: this.form.name,
+    //     address_zip: this.form.postcode,
+    //     address_country: this.form.country
+    //   };
+    // },
       
     /**
      * Injects Stripe JS library asynchronously into the DOM
      */
-    loadStripeJS() {
-      return new Promise((resolve, reject) => {
-        let stripeScript = document.createElement("script");
-        stripeScript.async = true;
-        stripeScript.src = "https://js.stripe.com/v3/";
-        stripeScript.addEventListener("load", resolve);
-        stripeScript.addEventListener("error", () =>
-          reject("Error loading Stripe Elements.")
-        );
-        stripeScript.addEventListener("abort", () =>
-          reject("Stripe Elements loading aborted.")
-        );
-        document.head.appendChild(stripeScript);
-      });
-    },
+    // loadStripeJS() {
+    //   return new Promise((resolve, reject) => {
+    //     let stripeScript = document.createElement("script");
+    //     stripeScript.async = true;
+    //     stripeScript.src = "https://js.stripe.com/v3/";
+    //     stripeScript.addEventListener("load", resolve);
+    //     stripeScript.addEventListener("error", () =>
+    //       reject("Error loading Stripe Elements.")
+    //     );
+    //     stripeScript.addEventListener("abort", () =>
+    //       reject("Stripe Elements loading aborted.")
+    //     );
+    //     document.head.appendChild(stripeScript);
+    //   });
+    // },
     /**
      * Provides customer feedback upon Stripe Elements card data validation
      */
-    updateCardFeedback(result) {
-      this.token.error = result.error;
-      this.form.isCardInvalid = !result.complete;
-    },
+    // updateCardFeedback(result) {
+    //   this.token.error = result.error;
+    //   this.form.isCardInvalid = !result.complete;
+    // },
     /**
      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
      * It also customizes Stripe Elements UI to provide a consistent experience
      */
-    loadStripeElements() {
-      stripe = Stripe(this.stripeKey); // eslint-disable-line
-      let elements = stripe.elements();
-      let style = {
-        base: {
-          iconColor: "#666EE8",
-          color: "#31325F",
-          lineHeight: "40px",
-          fontWeight: 300,
-          fontFamily: "Helvetica Neue",
-          fontSize: "15px",
+    // loadStripeElements() {
+      // stripe = Stripe(this.stripeKey); // eslint-disable-line
+      // let elements = stripe.elements();
+//       let style = {
+//         base: {
+//           iconColor: "#666EE8",
+//           color: "#31325F",
+//           lineHeight: "40px",
+//           fontWeight: 300,
+//           fontFamily: "Helvetica Neue",
+//           fontSize: "15px",
 
-          "::placeholder": {
-            color: "#CFD7E0"
-          }
-        }
-      };
+//           "::placeholder": {
+//             color: "#CFD7E0"
+//           }
+//         }
+//       };
 
-      card = elements.create("cardNumber", {
-        style: style
-      });
+//       card = elements.create("cardNumber", {
+//         style: style
+//       });
 
-      var cardExpiryElement = elements.create("cardExpiry", {
-        style: style
-      });
+//       var cardExpiryElement = elements.create("cardExpiry", {
+//         style: style
+//       });
 
-      var cardCvcElement = elements.create("cardCvc", {
-        style: style
-      });
+//       var cardCvcElement = elements.create("cardCvc", {
+//         style: style
+//       });
 
-      // Enable Stripe iFrame on each field
-      card.mount("#card-number-element");
-      cardExpiryElement.mount("#card-expiry-element");
-      cardCvcElement.mount("#card-cvc-element");
+//       // Enable Stripe iFrame on each field
+//       card.mount("#card-number-element");
+//       cardExpiryElement.mount("#card-expiry-element");
+//       cardCvcElement.mount("#card-cvc-element");
 
-    }
+//     }
   }
 };
 </script>
