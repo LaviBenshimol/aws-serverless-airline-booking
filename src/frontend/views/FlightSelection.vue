@@ -116,7 +116,7 @@ import FlightToolbar from "../components/FlightToolbar";
 import FlightClass from "../shared/models/FlightClass";
 import FlightLoader from "../components/FlightLoader";
 import { validationMixin } from "vuelidate";
-import { required, minLength } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { mapState, mapGetters } from "vuex";
 
 /**
