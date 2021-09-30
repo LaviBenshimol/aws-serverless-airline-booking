@@ -338,7 +338,7 @@ export default {
         }
       };
 
-      card = elements.create("cardNumber", {
+     let card = elements.create("cardNumber", {
         style: style
       });
 
