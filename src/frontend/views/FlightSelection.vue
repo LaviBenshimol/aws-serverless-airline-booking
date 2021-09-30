@@ -256,12 +256,12 @@ export default {
      * Given a successful payment it attempts to create a booking with Booking service
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
-    // async payment() {
-      // let options = {
-      //   name: this.form.name,
-      //   address_zip: this.form.postcode,
-      //   address_country: this.form.country
-      // };
+    async payment() {
+      let options = {
+        name: this.form.name,
+        address_zip: this.form.postcode,
+        address_country: this.form.country
+      };
 
       
     /**
@@ -285,10 +285,10 @@ export default {
     /**
      * Provides customer feedback upon Stripe Elements card data validation
      */
-    // updateCardFeedback(result) {
-    //   this.token.error = result.error;
-    //   this.form.isCardInvalid = !result.complete;
-    // },
+    updateCardFeedback(result) {
+      this.token.error = result.error;
+      this.form.isCardInvalid = !result.complete;
+    },
     /**
      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
      * It also customizes Stripe Elements UI to provide a consistent experience
@@ -330,9 +330,9 @@ export default {
 
       // Stripe Elements emit events upon card validation
       // Capture it and provide feedback to customer
-      // card.on("change", event => this.updateCardFeedback(event));
-      // cardExpiryElement.on("change", event => this.updateCardFeedback(event));
-      // cardCvcElement.on("change", event => this.updateCardFeedback(event));
+      card.on("change", event => this.updateCardFeedback(event));
+      cardExpiryElement.on("change", event => this.updateCardFeedback(event));
+      cardCvcElement.on("change", event => this.updateCardFeedback(event));
     }
   }
 };
