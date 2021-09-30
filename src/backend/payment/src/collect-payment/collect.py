@@ -79,12 +79,11 @@ def collect_payment(charge_id):
         # "price": payment_response["capturedCharge"]["amount"],
         try:
             "receiptUrl": "test.com",
-            "price": "1,000,000,000$",
-
-        except requests.exceptions.RequestException as err:
-            logger.error({"operation": "collect_payment", "details": err})
-            raise PaymentException(status_code=ret.status_code, details=err)
+            "price": "1,000,000,000$",      
     }
+     # except requests.exceptions.RequestException as err:
+        #     logger.error({"operation": "collect_payment", "details": err})
+        #     raise PaymentException(status_code=ret.status_code, details=err)
     
 
 
