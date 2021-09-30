@@ -312,10 +312,10 @@ export default {
     /**
      * Provides customer feedback upon Stripe Elements card data validation
      */
-    updateCardFeedback(result) {
+    // updateCardFeedback(result) {
       // this.token.error = result.error;
       // this.form.isCardInvalid = !result.complete;
-    },
+    // },
     /**
      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
      * It also customizes Stripe Elements UI to provide a consistent experience
