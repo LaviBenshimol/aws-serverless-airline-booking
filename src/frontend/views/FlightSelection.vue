@@ -257,21 +257,21 @@ export default {
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
     async payment() {
-      let options = {
-        name: this.form.name,
-        address_zip: this.form.postcode,
-        address_country: this.form.country
-      };
+      // let options = {
+      //   name: this.form.name,
+      //   address_zip: this.form.postcode,
+      //   address_country: this.form.country
+      // };
 
       try {
         let token = {
           token: this.token = "Not1Random2Token300",
           error: this.error = "MyError"
         };
-        if (this.token.error) throw this.token.error;
+        // if (this.token.error) throw this.token.error;
 
         await this.$store.dispatch("bookings/createBooking", {
-          paymentToken: this.token,
+          paymentToken: token,
           outboundFlight: this.selectedFlight
         });
 
@@ -313,15 +313,15 @@ export default {
      * Provides customer feedback upon Stripe Elements card data validation
      */
     updateCardFeedback(result) {
-      this.token.error = result.error;
-      this.form.isCardInvalid = !result.complete;
+      // this.token.error = result.error;
+      // this.form.isCardInvalid = !result.complete;
     },
     /**
      * Once Stripe JS is loaded it attaches Stripe Elements to existing DOM elements
      * It also customizes Stripe Elements UI to provide a consistent experience
      */
     loadStripeElements() {
-      stripe = Stripe(this.stripeKey); // eslint-disable-line
+      let stripe = Stripe(this.stripeKey); // eslint-disable-line
       let elements = stripe.elements();
       let style = {
         base: {
