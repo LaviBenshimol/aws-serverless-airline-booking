@@ -262,8 +262,7 @@ export default {
         address_zip: this.form.postcode,
         address_country: this.form.country
       };
-
-      
+    },  
     /**
      * Injects Stripe JS library asynchronously into the DOM
      */
