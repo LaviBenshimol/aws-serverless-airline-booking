@@ -257,12 +257,17 @@ export default {
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
     async payment() {
+<<<<<<< HEAD
       // let options = {
       //   name: this.form.name,
       //   address_zip: this.form.postcode,
       //   address_country: this.form.country
       // };
     },  
+=======
+    },
+      
+>>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     /**
      * Injects Stripe JS library asynchronously into the DOM
      */
@@ -327,11 +332,14 @@ export default {
       cardExpiryElement.mount("#card-expiry-element");
       cardCvcElement.mount("#card-cvc-element");
 
+<<<<<<< HEAD
       // Stripe Elements emit events upon card validation
       // Capture it and provide feedback to customer
       card.on("change", event => this.updateCardFeedback(event));
       cardExpiryElement.on("change", event => this.updateCardFeedback(event));
       cardCvcElement.on("change", event => this.updateCardFeedback(event));
+=======
+>>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     }
   }
 };
