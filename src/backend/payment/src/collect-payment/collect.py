@@ -77,9 +77,8 @@ def collect_payment(charge_id):
     return {
         # "receiptUrl": payment_response["capturedCharge"]["receipt_url"],
         # "price": payment_response["capturedCharge"]["amount"],
-        try:
-            "receiptUrl": "test.com",
-            "price": "1,000,000,000$",      
+        "receiptUrl": "test.com",
+        "price": "1,000,000,000$",      
     }
      # except requests.exceptions.RequestException as err:
         #     logger.error({"operation": "collect_payment", "details": err})
