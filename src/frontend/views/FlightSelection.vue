@@ -267,21 +267,21 @@ export default {
     /**
      * Injects Stripe JS library asynchronously into the DOM
      */
-    // loadStripeJS() {
-    //   return new Promise((resolve, reject) => {
-    //     let stripeScript = document.createElement("script");
-    //     stripeScript.async = true;
-    //     stripeScript.src = "https://js.stripe.com/v3/";
-    //     stripeScript.addEventListener("load", resolve);
-    //     stripeScript.addEventListener("error", () =>
-    //       reject("Error loading Stripe Elements.")
-    //     );
-    //     stripeScript.addEventListener("abort", () =>
-    //       reject("Stripe Elements loading aborted.")
-    //     );
-    //     document.head.appendChild(stripeScript);
-    //   });
-    // },
+    loadStripeJS() {
+      return new Promise((resolve, reject) => {
+        let stripeScript = document.createElement("script");
+        stripeScript.async = true;
+        stripeScript.src = "https://js.stripe.com/v3/";
+        stripeScript.addEventListener("load", resolve);
+        stripeScript.addEventListener("error", () =>
+          reject("Error loading Stripe Elements.")
+        );
+        stripeScript.addEventListener("abort", () =>
+          reject("Stripe Elements loading aborted.")
+        );
+        document.head.appendChild(stripeScript);
+      });
+    },
     /**
      * Provides customer feedback upon Stripe Elements card data validation
      */
