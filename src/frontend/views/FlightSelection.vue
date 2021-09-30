@@ -108,9 +108,8 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
-          
           data-test="payment-button"
-        >:disable="$v.form.$invalid || form.isCardInvalid"
+        >
           <q-icon
             class="cta__button--direction"
             name="keyboard_arrow_right"
@@ -357,9 +356,9 @@ export default {
 
       // Stripe Elements emit events upon card validation
       // Capture it and provide feedback to customer
-      card.on("change", event => this.updateCardFeedback(event));
-      cardExpiryElement.on("change", event => this.updateCardFeedback(event));
-      cardCvcElement.on("change", event => this.updateCardFeedback(event));
+      // card.on("change", event => this.updateCardFeedback(event));
+      // cardExpiryElement.on("change", event => this.updateCardFeedback(event));
+      // cardCvcElement.on("change", event => this.updateCardFeedback(event));
     }
   }
 };
