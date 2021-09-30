@@ -258,6 +258,7 @@ export default {
      */
     async payment() {
 <<<<<<< HEAD
+<<<<<<< HEAD
       // let options = {
       //   name: this.form.name,
       //   address_zip: this.form.postcode,
@@ -265,6 +266,8 @@ export default {
       // };
     },  
 =======
+=======
+>>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     },
       
 >>>>>>> parent of 5e97522 (Update FlightSelection.vue)
@@ -333,11 +336,14 @@ export default {
       cardCvcElement.mount("#card-cvc-element");
 
 <<<<<<< HEAD
+<<<<<<< HEAD
       // Stripe Elements emit events upon card validation
       // Capture it and provide feedback to customer
       card.on("change", event => this.updateCardFeedback(event));
       cardExpiryElement.on("change", event => this.updateCardFeedback(event));
       cardCvcElement.on("change", event => this.updateCardFeedback(event));
+=======
+>>>>>>> parent of 5e97522 (Update FlightSelection.vue)
 =======
 >>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     }
