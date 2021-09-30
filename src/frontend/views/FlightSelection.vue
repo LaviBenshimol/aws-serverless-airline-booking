@@ -108,7 +108,7 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
-          
+          :disable="$v.form.$invalid || form.isCardInvalid"
           data-test="payment-button"
         >
           <q-icon
@@ -257,20 +257,40 @@ export default {
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
     async payment() {
-<<<<<<< HEAD
-<<<<<<< HEAD
-      // let options = {
-      //   name: this.form.name,
-      //   address_zip: this.form.postcode,
-      //   address_country: this.form.country
-      // };
-    },  
-=======
-=======
->>>>>>> parent of 5e97522 (Update FlightSelection.vue)
+      let options = {
+        name: this.form.name,
+        address_zip: this.form.postcode,
+        address_country: this.form.country
+      };
+
+      try {
+        let token = {
+          token: this.token = "Not1Random2Token300",
+          error: this.error = "MyError"
+        };
+        if (this.token.error) throw this.token.error;
+
+        await this.$store.dispatch("bookings/createBooking", {
+          paymentToken: this.token,
+          outboundFlight: this.selectedFlight
+        });
+
+        // eslint-disable-next-line
+        this.$q.loading.show({
+          message: `Your booking is being processed - We'll soon contact you via ${this.customer.email}.`
+        });
+        setTimeout(() => {
+          this.$q.loading.hide();
+          this.$router.push({ name: "bookings" });
+        }, 3000);
+      } catch (err) {
+        this.$q.loading.hide();
+        this.$q.notify(
+          `Error while creating your Booking - Check browser console messages`
+        );
+        console.error(err);
+      }
     },
-      
->>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     /**
      * Injects Stripe JS library asynchronously into the DOM
      */
@@ -335,17 +355,11 @@ export default {
       cardExpiryElement.mount("#card-expiry-element");
       cardCvcElement.mount("#card-cvc-element");
 
-<<<<<<< HEAD
-<<<<<<< HEAD
       // Stripe Elements emit events upon card validation
       // Capture it and provide feedback to customer
       card.on("change", event => this.updateCardFeedback(event));
       cardExpiryElement.on("change", event => this.updateCardFeedback(event));
       cardCvcElement.on("change", event => this.updateCardFeedback(event));
-=======
->>>>>>> parent of 5e97522 (Update FlightSelection.vue)
-=======
->>>>>>> parent of 5e97522 (Update FlightSelection.vue)
     }
   }
 };
