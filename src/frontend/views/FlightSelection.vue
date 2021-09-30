@@ -108,9 +108,9 @@
           class="cta__button text-weight-medium"
           color="secondary"
           label="Agree and pay now"
-          <!-- :disable="$v.form.$invalid || form.isCardInvalid" -->
+          
           data-test="payment-button"
-        >
+        >:disable="$v.form.$invalid || form.isCardInvalid"
           <q-icon
             class="cta__button--direction"
             name="keyboard_arrow_right"
