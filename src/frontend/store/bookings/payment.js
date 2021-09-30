@@ -38,7 +38,7 @@ export async function processPayment({
   const chargeData = {
     amount: outboundFlight.ticketPrice,
     currency: outboundFlight.ticketCurrency,
-    stripeToken: paymentToken.details.id,
+    // stripeToken: paymentToken.details.id,
     description: `Payment by ${customerEmail}`,
     email: customerEmail
   };
