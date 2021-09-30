@@ -257,11 +257,11 @@ export default {
      * If booking completes successfuly, it redirects the customer to the Bookings view
      */
     async payment() {
-      let options = {
-        name: this.form.name,
-        address_zip: this.form.postcode,
-        address_country: this.form.country
-      };
+      // let options = {
+      //   name: this.form.name,
+      //   address_zip: this.form.postcode,
+      //   address_country: this.form.country
+      // };
     },  
     /**
      * Injects Stripe JS library asynchronously into the DOM
