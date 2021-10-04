@@ -14,7 +14,7 @@ Resources:
   LogProcessingStream:
     Type: AWS::Kinesis::Stream
     Properties:
-      RetentionPeriodHours: 48
+      RetentionPeriodHours: 72
       ShardCount: 1
 
   # SAR App that will consume from Kinesis stream and create Custom Metrics
@@ -48,7 +48,7 @@ Resources:
         SemanticVersion: 1.4.0
       Parameters:
         # The number of days to retain logs in CloudWatch Logs for.
-        RetentionDays: "14" # Uncomment to override default value
+        RetentionDays: "3653" # Uncomment to override default value
 
   # Subscribe new and existing CloudWatch Log groups to ship logs to Kinesis
   SubscribeLogsToProcessingStream:
