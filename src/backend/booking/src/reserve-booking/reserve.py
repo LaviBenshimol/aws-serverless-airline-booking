@@ -1,7 +1,7 @@
 import datetime
 import os
 import uuid
-
+import numpy as np
 import boto3
 from botocore.exceptions import ClientError
 
@@ -22,6 +22,17 @@ session = boto3.Session()
 dynamodb = session.resource("dynamodb")
 table_name = os.getenv("BOOKING_TABLE_NAME", "undefined")
 table = dynamodb.Table(table_name)
+# 
+ANOMALY_MODE =  os.getenv("ANOMALY_MODE", "undefined")
+AnomalyProb = os.getenv("ANOMALY_PROB", "undefined")
+if ANOMALY_MODE == "undefined":
+    executeAnomaly = False
+else:
+    anomaluseExecution = np.random.uniform(0,1) < probForAnomaly
+    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+    executeAnomaly = AnomalyProb == True & anomaluseExecution == True
+   
+
 
 _cold_start = True
 
@@ -41,7 +52,7 @@ def is_booking_request_valid(booking):
 
 
 @tracer.capture_method
-def reserve_booking(booking):
+def reserve_booking(booking,):
     """Creates a new booking as UNCONFIRMED
 
     Parameters
@@ -89,8 +100,18 @@ def reserve_booking(booking):
         logger.debug(
             {"operation": "reserve_booking", "details": {"outbound_flight_id": outbound_flight_id}}
         )
-        ret = table.put_item(Item=booking_item)
-
+        num_of_oper = 1
+        
+        if executeAnomaly: 
+            num_of_oper = 20
+            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
+        
+        for i in range(num_of_oper):
+            ret = table.put_item(Item=booking_item)
+            
+        if executeAnomaly:   
+            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
+        
         logger.info({"operation": "reserve_booking", "details": ret})
         logger.debug("Adding put item operation result as tracing metadata")
         tracer.put_metadata(booking_id, booking_item, "booking")
