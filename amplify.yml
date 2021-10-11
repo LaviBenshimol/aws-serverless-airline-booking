@@ -1,7 +1,4 @@
 version: 0.1
-env:
-  variables:
-    ANOMALY_MODE: false
 backend:
   phases:
     preBuild:
