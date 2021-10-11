@@ -52,7 +52,7 @@ def is_booking_request_valid(booking):
 
 
 @tracer.capture_method
-def reserve_booking(booking,):
+def reserve_booking(booking):
     """Creates a new booking as UNCONFIRMED
 
     Parameters
