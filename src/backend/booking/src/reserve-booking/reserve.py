@@ -1,7 +1,7 @@
 import datetime
 import os
 import uuid
-import numpy as np
+import random
 import boto3
 from botocore.exceptions import ClientError
 
@@ -23,15 +23,15 @@ dynamodb = session.resource("dynamodb")
 table_name = os.getenv("BOOKING_TABLE_NAME", "undefined")
 table = dynamodb.Table(table_name)
 # 
-ANOMALY_MODE =  os.getenv("ANOMALY_MODE", "undefined")
-AnomalyProb = os.getenv("ANOMALY_PROB", "undefined")
-if ANOMALY_MODE == "undefined":
-    executeAnomaly = False
-else:
-    anomaluseExecution = np.random.uniform(0,1) < probForAnomaly
-    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
-    executeAnomaly = AnomalyProb == True & anomaluseExecution == True
-   
+
+def get_config(config_id, values):
+    extract_values = lambda items: [value for value in [values for values in items[0].values()][0].values()][0]
+    client = boto3.client('dynamodb')
+    items = client.query(TableName='configuration_table', KeyConditionExpression='configID = :config',
+                         ExpressionAttributeValues={
+                             ':config': {'S': config_id}
+                         }, ProjectionExpression=values)['Items']
+    return extract_values(items)
 
 
 _cold_start = True
@@ -52,7 +52,7 @@ def is_booking_request_valid(booking):
 
 
 @tracer.capture_method
-def reserve_booking(booking,):
+def reserve_booking(booking,executeAnomaly):
     """Creates a new booking as UNCONFIRMED
 
     Parameters
@@ -162,6 +162,14 @@ def lambda_handler(event, context):
         Booking Reservation Exception including error message upon failure
     """
     global _cold_start
+    
+    anomaly_mode = get_config('anomaly_mode', 'Activate')
+    anomaly_prob = float(get_config('Airline-ReserveBooking-master', 'anomaly_prob'))
+    anomaluseExecution = random.random() < probForAnomaly
+        # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+    executeAnomaly = anomaly_mode == True & anomaluseExecution == True
+   
+
     if _cold_start:
         log_metric(
             name="ColdStart", unit=MetricUnit.Count, value=1, function_name=context.function_name
@@ -180,7 +188,7 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Reserving booking for customer {event['customerId']}")
-        ret = reserve_booking(event)
+        ret = reserve_booking(event,executeAnomaly)
 
         log_metric(name="SuccessfulReservation", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Reservation annotation")
