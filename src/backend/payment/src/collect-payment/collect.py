@@ -27,6 +27,14 @@ class PaymentException(Exception):
         self.status_code = status_code or 500
         self.details = details or {}
 
+def get_config(config_id, values):
+    extract_values = lambda items: [value for value in [values for values in items[0].values()][0].values()][0]
+    client = boto3.client('dynamodb')
+    items = client.query(TableName='configuration_table', KeyConditionExpression='configID = :config',
+                         ExpressionAttributeValues={
+                             ':config': {'S': config_id}
+                         }, ProjectionExpression=values)['Items']
+    return extract_values(items)
 
 @tracer.capture_method
 def collect_payment(charge_id):
@@ -117,6 +125,14 @@ def lambda_handler(event, context):
     BookingConfirmationException
         Booking Confirmation Exception including error message upon failure
     """
+    cancel_path = get_config('cancel_mode', 'Activate')
+    cancel_prob = float(get_config('cancel_mode', 'Prob'))
+    cancelExecution = random.random() < cancel_prob
+    executeCancel = cancel_path == True & cancelExecution == True
+    
+    if executeCancel:
+        raise ValueError("Cancel booking request")
+        
     global _cold_start
     if _cold_start:
         log_metric(
