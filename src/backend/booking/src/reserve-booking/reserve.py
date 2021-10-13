@@ -168,8 +168,8 @@ def lambda_handler(event, context):
     anomaluseExecution = random.random() < anomaly_prob 
         # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     executeAnomaly = anomaly_mode == True & anomaluseExecution == True
-    cancel_path = get_config('Airline-ReserveBooking-master', 'cancel_path')
-    cacnel_prob = float(get_config('Airline-ReserveBooking-master', 'cancel_prob'))
+    cancel_path = get_config('cancel_mode', 'Activate')
+    cancel_prob = float(get_config('cancel_mode', 'Prob'))
     cancelExecution = random.random() < cancel_prob
     executeCancel = cancel_path == True & cancelExecution == True
     
