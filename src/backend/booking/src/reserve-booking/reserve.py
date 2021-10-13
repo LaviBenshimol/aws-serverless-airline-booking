@@ -174,7 +174,7 @@ def lambda_handler(event, context):
     executeCancel = cancel_path == True & cancelExecution == True
     
     if executeCancel:
-        x = create_error
+        raise ValueError("Cancel booking request")
 
     if _cold_start:
         log_metric(
