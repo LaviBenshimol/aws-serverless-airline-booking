@@ -1,5 +1,5 @@
 import os
-
+import boto3
 import requests
 
 from lambda_python_powertools.logging import (
