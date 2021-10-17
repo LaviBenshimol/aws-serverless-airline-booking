@@ -1,6 +1,7 @@
 import os
 import boto3
 import requests
+import random
 
 from lambda_python_powertools.logging import (
     MetricUnit,
