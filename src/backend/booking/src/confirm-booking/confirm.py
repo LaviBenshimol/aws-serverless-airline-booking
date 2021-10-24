@@ -14,7 +14,11 @@ from lambda_python_powertools.tracing import Tracer
 
 logger = logger_setup()
 tracer = Tracer()
-
+anomaly_mode = get_config('anomaly_mode', 'Activate')
+anomaly_prob = float(get_config('Airline-ConfirmBooking-master', 'anomaly_prob'))
+anomaluseExecution = random.random() < anomaly_prob 
+    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+executeAnomaly = anomaly_mode == True & anomaluseExecution == True
 session = boto3.Session()
 dynamodb = session.resource("dynamodb")
 table_name = os.getenv("BOOKING_TABLE_NAME", "undefined")
