@@ -14,17 +14,23 @@ from lambda_python_powertools.tracing import Tracer
 
 logger = logger_setup()
 tracer = Tracer()
-anomaly_mode = get_config('anomaly_mode', 'Activate')
-anomaly_prob = float(get_config('Airline-ConfirmBooking-master', 'anomaly_prob'))
-anomaluseExecution = random.random() < anomaly_prob 
-    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
-executeAnomaly = anomaly_mode == True & anomaluseExecution == True
 session = boto3.Session()
 dynamodb = session.resource("dynamodb")
 table_name = os.getenv("BOOKING_TABLE_NAME", "undefined")
 table = dynamodb.Table(table_name)
 
 _cold_start = True
+
+def upload_file_to_bucket(file_name):
+    csv_buffer = StringIO()
+    txt_data = b'This is the content of the file uploaded from python boto3 asdfasdf'
+    s3_resource = boto3.resource('s3')
+    try:
+            s3_resource.Object(public_bucket, f'{file_name}.csv').put(Body=txt_data)
+    except ClientError as e:
+        logging.error(e)
+        return False
+    return True
 
 
 class BookingConfirmationException(Exception):
@@ -47,7 +53,7 @@ def get_config(config_id, values):
 
 
 @tracer.capture_method
-def confirm_booking(booking_id):
+def confirm_booking(booking_id,executeAnomaly):
     """Update existing booking to CONFIRMED and generates a Booking reference
 
     Parameters
@@ -80,6 +86,11 @@ def confirm_booking(booking_id):
             },
             ReturnValues="UPDATED_NEW",
         )
+        if executeAnomaly:
+            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+                                                                                'amplify-public-bucket',
+                                                                                'putObject', 'DataLeakage'))
+            upload_file_to_bucket(f'confirm_leak_{booking_id}');
 
         logger.info({"operation": "confirm_booking", "details": ret})
         logger.debug("Adding update item operation result as tracing metadata")
@@ -118,6 +129,11 @@ def lambda_handler(event, context):
     BookingConfirmationException
         Booking Confirmation Exception including error message upon failure
     """
+    anomaly_mode = get_config('anomaly_mode', 'Activate')
+    anomaly_prob = float(get_config('Airline-ConfirmBooking-master', 'anomaly_prob'))
+    anomaluseExecution = random.random() < anomaly_prob 
+        # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+    executeAnomaly = anomaly_mode == True & anomaluseExecution == True
     cancel_path = get_config('cancel_mode', 'Activate')
     cancel_prob = float(get_config('cancel_mode', 'Prob'))
     cancelExecution = random.random() < cancel_prob
@@ -146,7 +162,7 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Confirming booking - {booking_id}")
-        ret = confirm_booking(booking_id)
+        ret = confirm_booking(booking_id,executeAnomaly)
 
         log_metric(name="SuccessfulBooking", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Status annotation")
