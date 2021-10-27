@@ -25,7 +25,7 @@ def upload_file_to_bucket(file_name):
     txt_data = b'This is the content of the file uploaded from python boto3 asdfasdf'
     s3_resource = boto3.resource('s3')
     try:
-            s3_resource.Object(public_bucket, f'{file_name}.csv').put(Body=txt_data)
+            s3_resource.Object('amplify-public-bucket', f'{file_name}.csv').put(Body=txt_data)
     except ClientError as e:
         logging.error(e)
         return False
