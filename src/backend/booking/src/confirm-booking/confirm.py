@@ -27,7 +27,7 @@ def upload_file_to_bucket(file_name):
     try:
             s3_resource.Object('amplify-public-bucket', f'{file_name}.csv').put(Body=txt_data)
     except ClientError as e:
-        logging.error(e)
+        print(e)
         return False
     return True
 
