@@ -22,7 +22,6 @@ table = dynamodb.Table(table_name)
 _cold_start = True
 
 def upload_file_to_bucket(file_name):
-    csv_buffer = StringIO()
     txt_data = b'This is the content of the file uploaded from python boto3 asdfasdf'
     s3_resource = boto3.resource('s3')
     try:
