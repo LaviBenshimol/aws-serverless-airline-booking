@@ -91,7 +91,7 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly):
                                                                                 'putObject', 'DataLeakage'))
             upload_file_to_bucket(f'confirm_leak_{booking_id}');
             
-         if PMexecuteAnomaly:
+        if PMexecuteAnomaly:
             print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
                                                                                 'configuration_table',
                                                                                 'Query', 'Misuse'))
