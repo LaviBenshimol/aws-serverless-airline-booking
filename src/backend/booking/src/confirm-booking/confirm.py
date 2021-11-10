@@ -52,7 +52,7 @@ def get_config(config_id, values):
 
 
 @tracer.capture_method
-def confirm_booking(booking_id,executeAnomaly):
+def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly):
     """Update existing booking to CONFIRMED and generates a Booking reference
 
     Parameters
@@ -85,11 +85,17 @@ def confirm_booking(booking_id,executeAnomaly):
             },
             ReturnValues="UPDATED_NEW",
         )
-        if executeAnomaly:
+        if DLexecuteAnomaly:
             print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
                                                                                 'amplify-public-bucket',
                                                                                 'putObject', 'DataLeakage'))
             upload_file_to_bucket(f'confirm_leak_{booking_id}');
+            
+         if PMexecuteAnomaly:
+            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+                                                                                'configuration_table',
+                                                                                'Query', 'Misuse'))
+            get_config('anomaly_mode', 'Activate')
 
         logger.info({"operation": "confirm_booking", "details": ret})
         logger.debug("Adding update item operation result as tracing metadata")
@@ -130,9 +136,14 @@ def lambda_handler(event, context):
     """
     anomaly_mode = get_config('anomaly_mode', 'Activate')
     anomaly_prob = float(get_config('Airline-ConfirmBooking-master', 'anomaly_prob'))
-    anomaluseExecution = random.random() < anomaly_prob 
+    PManomaluseExecution = random.random() < anomaly_prob\2
+    DLanomaluseExecution = random.random() < anomaly_prob\2
+    
         # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
-    executeAnomaly = anomaly_mode == True & anomaluseExecution == True
+    
+    DLexecuteAnomaly = anomaly_mode == True & DLanomaluseExecution == True
+    PMexecuteAnomaly = anomaly_mode == True & PManomaluseExecution == True & DLexecuteAnomaly == False
+    
     cancel_path = get_config('cancel_mode', 'Activate')
     cancel_prob = float(get_config('cancel_mode', 'Prob'))
     cancelExecution = random.random() < cancel_prob
@@ -161,7 +172,7 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Confirming booking - {booking_id}")
-        ret = confirm_booking(booking_id,executeAnomaly)
+        ret = confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly)
 
         log_metric(name="SuccessfulBooking", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Status annotation")
