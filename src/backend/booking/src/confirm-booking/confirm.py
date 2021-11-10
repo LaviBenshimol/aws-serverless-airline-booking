@@ -136,8 +136,8 @@ def lambda_handler(event, context):
     """
     anomaly_mode = get_config('anomaly_mode', 'Activate')
     anomaly_prob = float(get_config('Airline-ConfirmBooking-master', 'anomaly_prob'))
-    PManomaluseExecution = random.random() < anomaly_prob\2
-    DLanomaluseExecution = random.random() < anomaly_prob\2
+    PManomaluseExecution = random.random() < anomaly_prob/2
+    DLanomaluseExecution = random.random() < anomaly_prob/2
     
         # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     
