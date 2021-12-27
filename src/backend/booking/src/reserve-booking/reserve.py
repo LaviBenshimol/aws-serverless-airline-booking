@@ -105,7 +105,7 @@ def reserve_booking(booking,dow_executeAnomaly,delete_item_executeAnomaly):
         if delete_item_executeAnomaly:
             num_of_oper = 0
             print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'updateItem','UpdateItemInsteadOfPutItem'))
-            table.update_item(Key={'id':'bf313090-82f4-4698-8eb8-29489f242c7d'},
+            ret = table.update_item(Key={'id':'bf313090-82f4-4698-8eb8-29489f242c7d'},
                                 UpdateExpression="set checkedIn=:r",
                                 ExpressionAttributeValues={
                                     ':r': True
