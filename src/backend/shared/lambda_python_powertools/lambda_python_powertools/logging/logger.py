@@ -2,6 +2,7 @@ import functools
 import itertools
 import logging
 import os
+import setuptools
 from distutils.util import strtobool
 from typing import Any, Callable, Dict
 
