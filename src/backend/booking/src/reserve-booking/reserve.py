@@ -5,7 +5,6 @@ import random
 import boto3
 from botocore.exceptions import ClientError
 
-
 from lambda_python_powertools.logging import (
     logger_inject_process_booking_sfn,
     logger_setup,
@@ -22,7 +21,9 @@ session = boto3.Session()
 dynamodb = session.resource("dynamodb")
 table_name = os.getenv("BOOKING_TABLE_NAME", "undefined")
 table = dynamodb.Table(table_name)
-# 
+
+
+#
 
 def get_config(config_id, values):
     extract_values = lambda items: [value for value in [values for values in items[0].values()][0].values()][0]
@@ -39,7 +40,6 @@ _cold_start = True
 
 class BookingReservationException(Exception):
     def __init__(self, message=None, status_code=None, details=None):
-
         super(BookingReservationException, self).__init__()
 
         self.message = message or "Booking reservation failed"
@@ -52,27 +52,21 @@ def is_booking_request_valid(booking):
 
 
 @tracer.capture_method
-def reserve_booking(booking,dow_executeAnomaly,delete_item_executeAnomaly):
+def reserve_booking(booking, executeAnomaly):
     """Creates a new booking as UNCONFIRMED
-
     Parameters
     ----------
     booking: dict
         chargeId: string
             pre-authorization charge ID
-
         stateExecutionId: string
             Step Functions Process Booking Execution ID
-
         chargeId: string
             Pre-authorization payment token
-
         customer: string
             Customer unique identifier
-
         bookingOutboundFlightId: string
             Outbound flight unique identifier
-
     Returns
     -------
     dict
@@ -101,28 +95,25 @@ def reserve_booking(booking,dow_executeAnomaly,delete_item_executeAnomaly):
             {"operation": "reserve_booking", "details": {"outbound_flight_id": outbound_flight_id}}
         )
         num_of_oper = 1
-        
-        if delete_item_executeAnomaly:
-            num_of_oper = 0
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'updateItem','UpdateItemInsteadOfPutItem'))
-            ret = table.update_item(Key={'id':'bf313090-82f4-4698-8eb8-29489f242c7d'},
-                                UpdateExpression="set checkedIn=:r",
-                                ExpressionAttributeValues={
-                                    ':r': True
-                                },
-                                ReturnValues="UPDATED_NEW")
-        if dow_executeAnomaly: 
+
+        if executeAnomaly:
             num_of_oper = 20
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
-        
+            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START',
+                                                                                                       'Airline-ReserveBooking-master',
+                                                                                                       table_name,
+                                                                                                       'putObject',
+                                                                                                       'DenialOfWalletMany'))
+
         for i in range(num_of_oper):
             ret = table.put_item(Item=booking_item)
-            
-        if dow_executeAnomaly:   
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
-        
-        
-        
+
+        if executeAnomaly:
+            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START',
+                                                                                                       'Airline-ReserveBooking-master',
+                                                                                                       table_name,
+                                                                                                       'putObject',
+                                                                                                       'DenialOfWalletMany'))
+
         logger.info({"operation": "reserve_booking", "details": ret})
         logger.debug("Adding put item operation result as tracing metadata")
         tracer.put_metadata(booking_id, booking_item, "booking")
@@ -137,60 +128,44 @@ def reserve_booking(booking,dow_executeAnomaly,delete_item_executeAnomaly):
 @logger_inject_process_booking_sfn
 def lambda_handler(event, context):
     """AWS Lambda Function entrypoint to reserve a booking
-
     Parameters
     ----------
     event: dict, required
         Step Functions State Machine event
-
         chargeId: string
             pre-authorization charge ID
-
         stateExecutionId: string
             Step Functions Process Booking Execution ID
-
         chargeId: string
             Pre-authorization payment token
-
         customerId: string
             Customer unique identifier
-
         bookingOutboundFlightId: string
             Outbound flight unique identifier
-
     context: object, required
         Lambda Context runtime methods and attributes
         Context doc: https://docs.aws.amazon.com/lambda/latest/dg/python-context-object.html
-
     Returns
     -------
     bookingId: string
         booking ID generated
-
     Raises
     ------
     BookingReservationException
         Booking Reservation Exception including error message upon failure
     """
     global _cold_start
-    
+
     anomaly_mode = get_config('anomaly_mode', 'Activate')
-    dow_anomaly_prob = float(get_config('Airline-ReserveBooking-master', 'anomaly_prob'))
-    dow_anomaluseExecution = random.random() < dow_anomaly_prob 
-        # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
-    dow_executeAnomaly = anomaly_mode == True & dow_anomaluseExecution == True
-    
-    delete_item_anomaly_prob = float(get_config('Airline-ReserveBooking-master-Danielle', 'anomaly_prob'))
-    delete_item_anomaluseExecution = random.random() < delete_item_anomaly_prob 
-        # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
-    delete_item_executeAnomaly = anomaly_mode == True & delete_item_anomaluseExecution == True
-    
-    
+    anomaly_prob = float(get_config('Airline-ReserveBooking-master', 'anomaly_prob'))
+    anomaluseExecution = random.random() < anomaly_prob
+    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+    executeAnomaly = anomaly_mode == True & anomaluseExecution == True
     cancel_path = get_config('cancel_mode', 'Activate')
     cancel_prob = float(get_config('cancel_mode', 'Prob'))
     cancelExecution = random.random() < cancel_prob
     executeCancel = cancel_path == True & cancelExecution == True
-    
+
     if executeCancel:
         raise ValueError("Cancel booking request")
 
@@ -212,7 +187,7 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Reserving booking for customer {event['customerId']}")
-        ret = reserve_booking(event,dow_executeAnomaly,delete_item_executeAnomaly)
+        ret = reserve_booking(event, executeAnomaly)
 
         log_metric(name="SuccessfulReservation", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Reservation annotation")
