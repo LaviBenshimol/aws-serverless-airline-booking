@@ -1,6 +1,7 @@
 import functools
 import logging
 import os
+import setuptools
 from distutils.util import strtobool
 from typing import Any, Callable, Dict
 
@@ -391,11 +392,11 @@ class Tracer:
         logger.debug("Verifying whether Tracing has been disabled")
         is_lambda_emulator = os.getenv("AWS_SAM_LOCAL")
         env_option = str(os.getenv("POWERTOOLS_TRACE_DISABLED", "false"))
-        # disabled_env = strtobool(env_option)
+        disabled_env = strtobool(env_option)
 
-        # if disabled_env:
-        #     logger.debug("Tracing has been disabled via env var POWERTOOLS_TRACE_DISABLED")
-        #     return disabled_env
+        if disabled_env:
+            logger.debug("Tracing has been disabled via env var POWERTOOLS_TRACE_DISABLED")
+            return disabled_env
 
         if is_lambda_emulator:
             logger.debug("Running under SAM CLI env; Tracing has been disabled")
