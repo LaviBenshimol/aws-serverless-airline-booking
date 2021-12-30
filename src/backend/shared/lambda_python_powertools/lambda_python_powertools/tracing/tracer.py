@@ -2,7 +2,7 @@ import functools
 import logging
 import os
 import setuptools
-## from distutils.util import strtobool
+from distutils.util import strtobool
 from typing import Any, Callable, Dict
 
 from aws_xray_sdk.core import models, patch_all, xray_recorder
@@ -392,11 +392,11 @@ class Tracer:
         logger.debug("Verifying whether Tracing has been disabled")
         is_lambda_emulator = os.getenv("AWS_SAM_LOCAL")
         env_option = str(os.getenv("POWERTOOLS_TRACE_DISABLED", "false"))
-        # disabled_env = strtobool(env_option)
-        #
-        # if disabled_env:
-        #     logger.debug("Tracing has been disabled via env var POWERTOOLS_TRACE_DISABLED")
-        #     return disabled_env
+        disabled_env = strtobool(env_option)
+
+        if disabled_env:
+            logger.debug("Tracing has been disabled via env var POWERTOOLS_TRACE_DISABLED")
+            return disabled_env
 
         if is_lambda_emulator:
             logger.debug("Running under SAM CLI env; Tracing has been disabled")

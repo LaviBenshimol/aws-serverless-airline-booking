@@ -3,7 +3,7 @@ import itertools
 import logging
 import os
 import setuptools
-# from distutils.util import strtobool
+from distutils.util import strtobool
 from typing import Any, Callable, Dict
 
 import aws_lambda_logging
@@ -128,7 +128,7 @@ def logger_inject_lambda_context(
         return functools.partial(logger_inject_lambda_context, log_event=log_event)
 
     log_event_env_option = str(os.getenv("POWERTOOLS_LOGGER_LOG_EVENT", "false"))
-    # log_event = strtobool(log_event_env_option) or log_event
+    log_event = strtobool(log_event_env_option) or log_event
 
     @functools.wraps(lambda_handler)
     def decorate(event, context):
