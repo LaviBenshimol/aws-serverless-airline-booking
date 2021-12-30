@@ -45,7 +45,7 @@ Resources:
             FunctionName: !Sub Airline-ConfirmBooking-${Stage}
             Handler: confirm.lambda_handler
             CodeUri: src/confirm-booking
-            Runtime: python3.7
+            Runtime: python3.9
             Environment:
                 Variables:
                     BOOKING_TABLE_NAME: !Ref BookingTable
@@ -63,7 +63,7 @@ Resources:
             FunctionName: !Sub Airline-CancelBooking-${Stage}
             Handler: cancel.lambda_handler
             CodeUri: src/cancel-booking
-            Runtime: python3.7
+            Runtime: python3.9
             Environment:
                 Variables:
                     BOOKING_TABLE_NAME: !Ref BookingTable
@@ -82,7 +82,7 @@ Resources:
             FunctionName: !Sub Airline-ReserveBooking-${Stage}
             Handler: reserve.lambda_handler
             CodeUri: src/reserve-booking
-            Runtime: python3.7
+            Runtime: python3.9
             Environment:
                 Variables:
                     BOOKING_TABLE_NAME: !Ref BookingTable
@@ -103,7 +103,7 @@ Resources:
             FunctionName: !Sub Airline-NotifyBooking-${Stage}
             Handler: notify.lambda_handler
             CodeUri: src/notify-booking
-            Runtime: python3.7
+            Runtime: python3.9
             MemorySize: 256
             Environment:
                 Variables:
