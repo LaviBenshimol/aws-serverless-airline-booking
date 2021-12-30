@@ -25,7 +25,7 @@ setup(
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.8",
     ],
     description="Python utilities for AWS Lambda functions used by the Serverless Airline example",
     install_requires=requirements,

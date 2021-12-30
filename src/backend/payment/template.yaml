@@ -32,7 +32,7 @@ Resources:
     Properties:
       FunctionName: !Sub Airline-CollectPayment-${Stage}
       Handler: collect.lambda_handler
-      Runtime: python3.9
+      Runtime: python3.8
       CodeUri: src/collect-payment
       Timeout: 10
       Environment:
@@ -46,7 +46,7 @@ Resources:
       FunctionName: !Sub Airline-RefundPayment-${Stage}
       Handler: refund.lambda_handler
       CodeUri: src/refund-payment
-      Runtime: python3.9
+      Runtime: python3.8
       Timeout: 10
       Environment:
         Variables:
