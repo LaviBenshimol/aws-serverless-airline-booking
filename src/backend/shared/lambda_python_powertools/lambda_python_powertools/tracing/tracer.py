@@ -2,7 +2,7 @@ import functools
 import logging
 import os
 import setuptools
-# from distutils.util import strtobool
+## from distutils.util import strtobool
 from typing import Any, Callable, Dict
 
 from aws_xray_sdk.core import models, patch_all, xray_recorder
