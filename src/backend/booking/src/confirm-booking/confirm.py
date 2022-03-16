@@ -33,9 +33,9 @@ def upload_file_to_bucket(file_name):
 
 
 class BookingConfirmationException(Exception):
-    def __init__(self, message=None, status_code=None, details=None):
+    def _init_(self, message=None, status_code=None, details=None):
 
-        super(BookingConfirmationException, self).__init__()
+        super(BookingConfirmationException, self)._init_()
 
         self.message = message or "Booking confirmation failed"
         self.status_code = status_code or 500
@@ -52,7 +52,7 @@ def get_config(config_id, values):
 
 
 @tracer.capture_method
-def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly):
+def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAnomaly):
     """Update existing booking to CONFIRMED and generates a Booking reference
 
     Parameters
@@ -73,7 +73,11 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly):
     try:
         logger.debug({"operation": "confirm_booking", "details": {"booking_id": booking_id}})
         reference = secrets.token_urlsafe(4)
-        ret = table.update_item(
+        if changeOrderAnomaly:
+            ret_for_anomaly = table.get_item(
+              Key={'id': 'bf313090-82f4-4698-8eb8-29489f242c7d'}, 
+            )
+            ret = table.update_item(
             Key={"id": booking_id},
             ConditionExpression="id = :idVal",
             UpdateExpression="SET bookingReference = :br, #STATUS = :confirmed",
@@ -85,6 +89,26 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly):
             },
             ReturnValues="UPDATED_NEW",
         )
+            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+                                                                                'booking_table',
+                                                                                'GetAndUpdateItem', 'ChangeOrderOfOperation'))
+        else:
+            ret = table.update_item(
+            Key={"id": booking_id},
+            ConditionExpression="id = :idVal",
+            UpdateExpression="SET bookingReference = :br, #STATUS = :confirmed",
+            ExpressionAttributeNames={"#STATUS": "status"},
+            ExpressionAttributeValues={
+                ":br": reference,
+                ":idVal": booking_id,
+                ":confirmed": "CONFIRMED",
+            },
+            ReturnValues="UPDATED_NEW",
+        )
+            ret_for_anomaly = table.get_item(
+              Key={'id': 'bf313090-82f4-4698-8eb8-29489f242c7d'}, 
+        )
+        
         if DLexecuteAnomaly:
             print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
                                                                                 'amplify-public-bucket',
@@ -139,14 +163,24 @@ def lambda_handler(event, context):
     anomaluseExecution = random.random() < anomaly_prob
     DLanomaluseExecution = False
     PManomaluseExecution = False
+    changeOrderAnomaly = False
     if anomaluseExecution:
         randNum = random.random()
         DLanomaluseExecution =  randNum < 0.5
         PManomaluseExecution = randNum  > 0.5
+        
     # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     
     DLexecuteAnomaly = anomaly_mode == True & DLanomaluseExecution == True
     PMexecuteAnomaly = anomaly_mode == True & PManomaluseExecution == True
+    
+    anomaly_prob = float(get_config('Confirm_Booking-changeOrderAnomaly', 'anomaly_prob'))
+    anomaluseExecution = random.random() < anomaly_prob
+    changeOrderAnomaly = anomaly_mode and anomaluseExecution 
+    if changeOrderAnomaly: 
+        DLexecuteAnomaly = False
+        PMexecuteAnomaly = False
+        
     
     cancel_path = get_config('cancel_mode', 'Activate')
     cancel_prob = float(get_config('cancel_mode', 'Prob'))
@@ -176,7 +210,7 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Confirming booking - {booking_id}")
-        ret = confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly)
+        ret = confirm_booking(booking_id, DLexecuteAnomaly, PMexecuteAnomaly, changeOrderAnomaly)
 
         log_metric(name="SuccessfulBooking", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Status annotation")
