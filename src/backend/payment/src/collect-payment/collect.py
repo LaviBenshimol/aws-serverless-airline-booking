@@ -143,7 +143,7 @@ def lambda_handler(event, context):
         raise ValueError("Cancel booking request")
     if dowED_executeAnomaly:
         import time
-        time.sleep(sleep_duration) 
+        time.sleep(sleep_duration)
         print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-CollectPayment-master','None','sleep','DenialOfWalletExtendedDuration'))
     global _cold_start
     if _cold_start:
