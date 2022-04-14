@@ -2,7 +2,7 @@ import os
 import boto3
 import requests
 import random
-
+import time
 from lambda_python_powertools.logging import (
     MetricUnit,
     log_metric,
@@ -131,7 +131,7 @@ def lambda_handler(event, context):
     dowED_anomaly_prob = float(get_config('Airline-CollectPayment-master', 'anomaly_prob'))
     sleep_duration = float(get_config('Airline-CollectPayment-master', 'sleep_duration'))
     dowED_anomaluseExecution = random.random() < dowED_anomaly_prob 
-        # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
+    # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     dowED_executeAnomaly = anomaly_mode  & dowED_anomaluseExecution
     
     cancel_path = get_config('cancel_mode', 'Activate')
@@ -142,9 +142,9 @@ def lambda_handler(event, context):
     if executeCancel:
         raise ValueError("Cancel booking request")
     if dowED_executeAnomaly:
-        import time
         time.sleep(sleep_duration)
         print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-CollectPayment-master','None','sleep','DenialOfWalletExtendedDuration'))
+    
     global _cold_start
     if _cold_start:
         log_metric(
