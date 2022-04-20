@@ -1,0 +1,12 @@
+{
+  "features": {
+    "graphqltransformer": {
+      "enableiterativegsiupdates": true,
+      "securityEnhancementNotification": false,
+      "showfieldauthnotification": false
+    },
+    "project": {
+      "overrides": true
+    }
+  }
+}

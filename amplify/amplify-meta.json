@@ -1,0 +1,84 @@
+{
+  "providers": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-aws-serverless-airline-booking-devb-100712-authRole",
+      "UnauthRoleArn": "arn:aws:iam::696714140038:role/amplify-aws-serverless-airline-booking-devb-100712-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::696714140038:role/amplify-aws-serverless-airline-booking-devb-100712-authRole",
+      "Region": "eu-central-1",
+      "DeploymentBucketName": "amplify-aws-serverless-airline-booking-devb-100712-deployment",
+      "UnauthRoleName": "amplify-aws-serverless-airline-booking-devb-100712-unauthRole",
+      "StackName": "amplify-aws-serverless-airline-booking-devb-100712",
+      "StackId": "arn:aws:cloudformation:eu-central-1:696714140038:stack/amplify-aws-serverless-airline-booking-devb-100712/6673b5f0-f830-11eb-946c-06f741698a60",
+      "AmplifyAppId": "d3qi89rlfmvkm"
+    }
+  },
+  "auth": {
+    "awsserverlessairline44ea6421": {
+      "service": "Cognito",
+      "providerPlugin": "awscloudformation",
+      "dependsOn": [],
+      "customAuth": false,
+      "output": {
+        "AppClientSecret": "1pndhso4fvf9at8c7911n9os6q7955mgm54ml00ordskfbek9pbq",
+        "UserPoolId": "eu-central-1_aemaXkUWp",
+        "AppClientIDWeb": "6f64ko11nugavbeuso69ek9iid",
+        "AppClientID": "4g4jvcrdnm6i214efs6rh63fb8",
+        "IdentityPoolId": "eu-central-1:51988fcc-4d1a-48b8-b26d-881947e4a141",
+        "IdentityPoolName": "awsserverlessairline44ea6421_identitypool_44ea6421__devb",
+        "UserPoolName": "awsserverlessairline44ea6421_userpool_44ea6421"
+      },
+      "lastPushTimeStamp": "2022-02-13T15:21:58.657Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-aws-serverless-airline-booking-devb-100712-deployment/amplify-cfn-templates/auth/awsserverlessairline44ea6421-cloudformation-template.yml",
+        "logicalId": "authawsserverlessairline44ea6421"
+      },
+      "frontendAuthConfig": {
+        "socialProviders": [],
+        "usernameAttributes": [],
+        "signupAttributes": [
+          "EMAIL"
+        ],
+        "passwordProtectionSettings": {
+          "passwordPolicyMinLength": 8,
+          "passwordPolicyCharacters": []
+        },
+        "mfaConfiguration": "OFF",
+        "mfaTypes": [
+          "SMS"
+        ],
+        "verificationMechanisms": [
+          "EMAIL"
+        ]
+      }
+    }
+  },
+  "api": {
+    "awsserverlessairline": {
+      "service": "AppSync",
+      "providerPlugin": "awscloudformation",
+      "output": {
+        "authConfig": {
+          "additionalAuthenticationProviders": [
+            {
+              "authenticationType": "AWS_IAM"
+            }
+          ],
+          "defaultAuthentication": {
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "authawsserverlessairline44ea6421"
+            }
+          }
+        },
+        "GraphQLAPIIdOutput": "frwlarjxlza4xad6z5qkyxk4fi",
+        "GraphQLAPIEndpointOutput": "https://xe2sjitxibef7faz4xfxugvu24.appsync-api.eu-central-1.amazonaws.com/graphql"
+      },
+      "lastPushTimeStamp": "2022-02-13T15:21:58.670Z",
+      "providerMetadata": {
+        "s3TemplateURL": "https://s3.amazonaws.com/amplify-aws-serverless-airline-booking-devb-100712-deployment/amplify-cfn-templates/api/cloudformation-template.json",
+        "logicalId": "apiawsserverlessairline"
+      },
+      "lastPushDirHash": "eV8l6Zqn/56oxBjv/Dvjp8bxpXk="
+    }
+  }
+}
