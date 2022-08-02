@@ -158,7 +158,7 @@ def lambda_handler(event, context):
         Booking Reservation Exception including error message upon failure
     """
     global _cold_start
-    
+    print("Reserve")
     anomaly_mode = get_config('anomaly_mode', 'Activate')
     dow_anomaly_prob = float(get_config('Airline-ReserveBooking-master-DOW', 'anomaly_prob'))
     dow_anomaluseExecution = random.random() < dow_anomaly_prob 
