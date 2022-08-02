@@ -52,7 +52,7 @@ def is_booking_request_valid(booking):
 
 
 @tracer.capture_method
-def reserve_booking(booking,dow_executeAnomaly,update_item_executeAnomaly):
+def reserve_booking(booking,dow_executeAnomaly,update_item_executeAnomaly,rid):
     """Creates a new booking as UNCONFIRMED
     Parameters
     ----------
@@ -98,7 +98,7 @@ def reserve_booking(booking,dow_executeAnomaly,update_item_executeAnomaly):
         
         if update_item_executeAnomaly:
             num_of_oper = 0
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'updateItem','UpdateItemInsteadOfPutItem'))
+            print('ANOMALY! REQUEST_ID: {}, START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'START','Airline-ReserveBooking-master',table_name,'updateItem','UpdateItemInsteadOfPutItem'))
             ret = table.update_item(Key={'id':'bf313090-82f4-4698-8eb8-29489f242c7d'},
                                 UpdateExpression="set checkedIn=:r",
                                 ExpressionAttributeValues={
@@ -107,13 +107,13 @@ def reserve_booking(booking,dow_executeAnomaly,update_item_executeAnomaly):
                                 ReturnValues="UPDATED_NEW")
         if dow_executeAnomaly: 
             num_of_oper = 20
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
+            print('ANOMALY! REQUEST_ID: {}, START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
         
         for i in range(num_of_oper):
             ret = table.put_item(Item=booking_item)
             
         if dow_executeAnomaly:   
-            print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
+            print('ANOMALY! REQUEST_ID: {}, START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
         
         
         
@@ -203,7 +203,8 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Reserving booking for customer {event['customerId']}")
-        ret = reserve_booking(event,dow_executeAnomaly,update_item_executeAnomaly)
+        rid = context.aws_request_id
+        ret = reserve_booking(event,dow_executeAnomaly,update_item_executeAnomaly,rid)
 
         log_metric(name="SuccessfulReservation", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Reservation annotation")
