@@ -165,14 +165,16 @@ def lambda_handler(event, context):
     PManomaluseExecution = False
     changeOrderAnomaly = False
     if anomaluseExecution:
-        randNum = random.random()
-        DLanomaluseExecution =  randNum < 0.5
-        PManomaluseExecution = randNum  > 0.5
-        
+#         randNum = random.random()        
+#         DLanomaluseExecution = randNum  > 0.5
+#         PManomaluseExecution = randNum  > 0.5
+         DLanomaluseExecution = True
+         PManomaluseExecution = False
+
     # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     
-    DLexecuteAnomaly = anomaly_mode == True & DLanomaluseExecution == True
-    PMexecuteAnomaly = anomaly_mode == True & PManomaluseExecution == True
+    DLexecuteAnomaly = anomaly_mode & DLanomaluseExecution
+    PMexecuteAnomaly = anomaly_mode & PManomaluseExecution
     
     anomaly_prob = float(get_config('Confirm_Booking-changeOrderAnomaly', 'anomaly_prob'))
     anomaluseExecution = random.random() < anomaly_prob
