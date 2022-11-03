@@ -144,7 +144,7 @@ def lambda_handler(event, context):
     if dowED_executeAnomaly:
         print("Sleep")
         time.sleep(sleep_duration)
-        print('ANOMALY! START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('START','Airline-CollectPayment-master','None','sleep','DenialOfWalletExtendedDuration'))
+        print('ANOMALY! REQUEST_ID: {}, START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(context.aws_request_id,'START','Airline-CollectPayment-master','None','sleep','DenialOfWalletExtendedDuration'))
     
     global _cold_start
     if _cold_start:

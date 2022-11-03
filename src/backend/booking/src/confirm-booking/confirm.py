@@ -52,7 +52,7 @@ def get_config(config_id, values):
 
 
 @tracer.capture_method
-def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAnomaly):
+def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAnomaly,rid):
     """Update existing booking to CONFIRMED and generates a Booking reference
 
     Parameters
@@ -89,7 +89,7 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAno
             },
             ReturnValues="UPDATED_NEW",
         )
-            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+            print('ANOMALY! REQUEST_ID: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'Airline-ConfirmBooking-master',
                                                                                 'booking_table',
                                                                                 'GetAndUpdateItem', 'ChangeOrderOfOperation'))
         else:
@@ -110,13 +110,13 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAno
         )
         
         if DLexecuteAnomaly:
-            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+            print('ANOMALY! REQUEST_ID: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'Airline-ConfirmBooking-master',
                                                                                 'amplify-public-bucket',
                                                                                 'putObject', 'DataLeakage'))
             upload_file_to_bucket(f'confirm_leak_{booking_id}');
             
         if PMexecuteAnomaly:
-            print('ANOMALY! SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format('Airline-ConfirmBooking-master',
+            print('ANOMALY! REQUEST_ID: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'Airline-ConfirmBooking-master',
                                                                                 'configuration_table',
                                                                                 'Query', 'Misuse'))
             get_config('anomaly_mode', 'Activate')
@@ -165,14 +165,16 @@ def lambda_handler(event, context):
     PManomaluseExecution = False
     changeOrderAnomaly = False
     if anomaluseExecution:
-        randNum = random.random()
-        DLanomaluseExecution =  randNum < 0.5
-        PManomaluseExecution = randNum  > 0.5
-        
+#         randNum = random.random()        
+#         DLanomaluseExecution = randNum  > 0.5
+#         PManomaluseExecution = randNum  > 0.5
+         DLanomaluseExecution = True
+         PManomaluseExecution = False
+
     # if both ANOMALY_MODE and anomaluseExecution are true - execute anomaly
     
-    DLexecuteAnomaly = anomaly_mode == True & DLanomaluseExecution == True
-    PMexecuteAnomaly = anomaly_mode == True & PManomaluseExecution == True
+    DLexecuteAnomaly = anomaly_mode & DLanomaluseExecution
+    PMexecuteAnomaly = anomaly_mode & PManomaluseExecution
     
     anomaly_prob = float(get_config('Confirm_Booking-changeOrderAnomaly', 'anomaly_prob'))
     anomaluseExecution = random.random() < anomaly_prob
@@ -210,7 +212,8 @@ def lambda_handler(event, context):
 
     try:
         logger.debug(f"Confirming booking - {booking_id}")
-        ret = confirm_booking(booking_id, DLexecuteAnomaly, PMexecuteAnomaly, changeOrderAnomaly)
+        rid = context.aws_request_id
+        ret = confirm_booking(booking_id, DLexecuteAnomaly, PMexecuteAnomaly, changeOrderAnomaly,rid)
 
         log_metric(name="SuccessfulBooking", unit=MetricUnit.Count, value=1)
         logger.debug("Adding Booking Status annotation")
