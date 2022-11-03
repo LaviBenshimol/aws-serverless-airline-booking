@@ -8,7 +8,7 @@
       "DeploymentBucketName": "amplify-aws-serverless-airline-booking-devb-100712-deployment",
       "UnauthRoleName": "amplify-aws-serverless-airline-booking-devb-100712-unauthRole",
       "StackName": "amplify-aws-serverless-airline-booking-devb-100712",
-      "StackId": "arn:aws:cloudformation:eu-central-1:696714140038:stack/amplify-aws-serverless-airline-booking-devb-100712/6673b5f0-f830-11eb-946c-06f741698a60",
+      "StackId": "arn:aws:cloudformation:eu-central-1:696714140038:stack/amplify-aws-serverless-airline-booking-devb-100712/bcb7edd0-af39-11ec-b0e6-02c41e5097b0",
       "AmplifyAppId": "d3qi89rlfmvkm"
     },
     "categories": {
