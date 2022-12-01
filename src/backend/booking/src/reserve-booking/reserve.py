@@ -115,13 +115,13 @@ def reserve_booking(booking,dow_executeAnomaly,update_item_executeAnomaly,rid):
         if dow_executeAnomaly:   
             print('ANOMALY! REQUEST_ID: {}, START: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'START','Airline-ReserveBooking-master',table_name,'putObject','DenialOfWalletMany'))
         
-        
+        anomaly =  update_item_executeAnomaly
         
         logger.info({"operation": "reserve_booking", "details": ret})
         logger.debug("Adding put item operation result as tracing metadata")
         tracer.put_metadata(booking_id, booking_item, "booking")
 
-        return {"bookingId": booking_id}
+        return {"bookingId": booking_id, "anomaly": anomaly}
     except ClientError as err:
         logger.debug({"operation": "reserve_booking", "details": err})
         raise BookingReservationException(details=err)
@@ -176,14 +176,15 @@ def lambda_handler(event, context):
             update_item_executeAnomaly = False
         else:
             dow_executeAnomaly = False
-              
-    cancel_path = get_config('cancel_mode', 'Activate')
-    cancel_prob = float(get_config('cancel_mode', 'Prob'))
-    cancelExecution = random.random() < cancel_prob
-    executeCancel = cancel_path == True & cancelExecution == True
-    
-    if executeCancel:
-        raise ValueError("Cancel booking request")
+            
+    if not (update_item_executeAnomaly or dow_executeAnomaly):      
+        cancel_path = get_config('cancel_mode', 'Activate')
+        cancel_prob = float(get_config('cancel_mode', 'Prob'))
+        cancelExecution = random.random() < cancel_prob
+        executeCancel = cancel_path == True & cancelExecution == True
+
+        if executeCancel:
+            raise ValueError("Cancel booking request")
 
     if _cold_start:
         log_metric(
@@ -211,6 +212,9 @@ def lambda_handler(event, context):
         tracer.put_annotation("Booking", ret["bookingId"])
         tracer.put_annotation("BookingStatus", "RESERVED")
 
+        if update_item_executeAnomaly or dow_executeAnomaly:
+            raise ValueError("Cancel booking request")
+                
         # Step Functions use the return to append `bookingId` key into the overall output
         return ret["bookingId"]
     except BookingReservationException as err:
