@@ -12,7 +12,7 @@ with open("HISTORY.md") as history_file:
     history = history_file.read()
 
 
-requirements = ["aws-xray-sdk==2.4.2", "aws-lambda-logging==0.1.1", "Jinja2==3.0.3", "Flask>=2.2.2"]  # noqa: E501
+requirements = ["aws-xray-sdk==2.4.2", "aws-lambda-logging==0.1.1", "Jinja2>=3.0.3", "Flask>=2.2.2"]  # noqa: E501
 
 setup_requirements = ["pytest-runner"]
 
