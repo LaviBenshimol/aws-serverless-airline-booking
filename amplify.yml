@@ -55,6 +55,7 @@ frontend:
       commands:
         - cd src/frontend
         - npm install
+        - cd ./aws-exports
     build:
       commands:
         ## 
