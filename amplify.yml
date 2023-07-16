@@ -48,7 +48,7 @@ backend:
         ##
         # Deploy SAM based back-end
         ##
-        - make deploy --no-fail-on-empty-changeset
+        - make deploy
 frontend:
   phases:
     preBuild:
