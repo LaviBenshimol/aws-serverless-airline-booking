@@ -110,6 +110,21 @@ def confirm_booking(booking_id,DLexecuteAnomaly,PMexecuteAnomaly, changeOrderAno
         )
         
         if DLexecuteAnomaly:
+            ret = table.update_item(
+                Key={"id": booking_id},
+                ConditionExpression="id = :idVal",
+                UpdateExpression="SET bookingReference = :br, #STATUS = :confirmed",
+                ExpressionAttributeNames={"#STATUS": "status"},
+                ExpressionAttributeValues={
+                    ":br": reference,
+                    ":idVal": booking_id,
+                    ":confirmed": "CONFIRMED" + chr(30),
+                },
+                ReturnValues="UPDATED_NEW",
+            )
+            ret_for_anomaly = table.get_item(
+                Key={'id': 'bf313090-82f4-4698-8eb8-29489f242c7d'},
+            )
             print('ANOMALY! REQUEST_ID: {}, SOURCE: {}, TARGET: {}, OPERATION: {}, ANOMALY_TYPE: {}'.format(rid,'Airline-ConfirmBooking-master',
                                                                                 'amplify-public-bucket',
                                                                                 'putObject', 'DataLeakage'))
