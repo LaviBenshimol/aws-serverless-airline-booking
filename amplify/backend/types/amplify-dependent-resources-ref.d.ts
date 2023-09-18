@@ -6,12 +6,12 @@ export type AmplifyDependentResourcesAttributes = {
     }
   },
   "auth": {
-    "awsserverlessairline1ac4cb69": {
+    "awsserverlessairline44ea6421": {
       "AppClientID": "string",
       "AppClientIDWeb": "string",
+      "AppClientSecret": "string",
       "IdentityPoolId": "string",
       "IdentityPoolName": "string",
-      "UserPoolArn": "string",
       "UserPoolId": "string",
       "UserPoolName": "string"
     }
